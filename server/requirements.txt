@@ -1,0 +1,13 @@
+tensorflow=="2.*"
+pillow 
+lxml
+matplotlib 
+opencv-python 
+pycocotools
+numpy
+#vidgear
+pyzmq
+libopencv-dev 
+playsound
+pytest
+pygobject

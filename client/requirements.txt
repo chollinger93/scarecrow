@@ -1,0 +1,12 @@
+pillow 
+lxml
+matplotlib 
+opencv-python 
+pycocotools
+numpy
+pyzmq
+libopencv-dev 
+playsound
+pytest
+pygobject
+pygame
