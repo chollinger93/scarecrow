@@ -21,16 +21,17 @@ if [ -d "./debian-scripts/" ]; then
     logWarn "Helper scripts exists already, not installing!"
 else 
     git clone https://github.com/otter-in-a-suit/debian-scripts.git
-    source debian-scripts/util/logging.sh
-    source debian-scripts/util/venv.sh
-    source debian-scripts/util/package_installed.sh
-    ret=$?
-
-    if [[ $ret -ne 0 ]]; then
-        echo "Script installation failed!"
-        exit 1
-    fi
 fi 
+
+source debian-scripts/util/logging.sh
+source debian-scripts/util/venv.sh
+source debian-scripts/util/package_installed.sh
+ret=$?
+
+if [[ $ret -ne 0 ]]; then
+    echo "Script installation failed!"
+    exit 1
+fi
 
 logCol "Creating venv "
 check_create_venv "${DIR}/.."
@@ -44,7 +45,10 @@ fi
 
 logCol "Installing Python dependencies"
 pip3 install -r "../${MODE}/requirements.txt"
-
+if [[ $? -ne 0 ]]; then
+    logErr "Pip Installation failed, please check the logs!"
+    exit 1
+fi
 logCol "Checking for tensorflow models..."
 
 isInstalled protobuf-compiler
