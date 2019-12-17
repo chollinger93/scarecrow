@@ -3,7 +3,7 @@ import sys
 sys.path.append('..')
 import configparser
 from network.messages import Messages
-from network.sender import send_command
+from network.sender import send_command, start_sender_thread
 from tensor_detectors.detector import run_inference_for_single_image, load_model
 from vidgear.gears import NetGear
 import cv2
@@ -52,6 +52,8 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
 
         cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
         # print the most likely
+        if 'detection_scores' not in output_dict or len(category_index) < 1 or len(output_dict['detection_scores']) <= 0:
+            continue
         max_label = category_index[1]
         max_score = output_dict['detection_scores'][0]  # ['name']
         if max_label['name'] == 'person':
@@ -79,7 +81,7 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
     client.close()
 
 
-def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confidence, model_name):
+def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confidence, model_name, use_sender_thread):
     # List of the strings that is used to add correct label for each box.
     PATH_TO_LABELS = '../models/research/object_detection/data/mscoco_label_map.pbtxt'
     category_index = label_map_util.create_category_index_from_labelmap(
@@ -89,7 +91,10 @@ def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confiden
 
     for res in receive(category_index, detection_model, address, port, protocol, min_detections, min_confidence):
         print('Received signal')
-        send_command(zmq_ip, zmq_port, Messages.WARN)
+        if use_sender_thread:
+            start_sender_thread(zmq_ip, zmq_port, Messages.WARN)
+        else:
+            send_command(zmq_ip, zmq_port, Messages.WARN)
 
 
 if __name__ == "__main__":
@@ -99,4 +104,5 @@ if __name__ == "__main__":
     main(conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocl'],
          conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'], 
          float(conf['Detection']['min_detections']), float(conf['Detection']['min_confidence']),
-         model_name = conf['Tensorflow']['ModelUrl'])
+         model_name = conf['Tensorflow']['ModelUrl'], 
+         use_sender_thread=conf.getboolean('General', 'UseSenderThread'))

@@ -34,4 +34,6 @@ def receive_messages(server, port, streamer, audio_path, *args):
 def start_zmq_thread(server, port, audio_path, streamer='pygame', msg=messages.Messages.WARN):
     # TODO: *args msg
     p = mp.Process(target=receive_messages, args=(server, port, streamer, audio_path, msg, ))
+    # Set as daemon, so it gets killed alongside the parent
+    p.daemon = True
     p.start()
