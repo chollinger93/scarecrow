@@ -55,6 +55,17 @@ else
     python3 setup.py build 
     python3 setup.py install 
 fi
+
+log "Installing vidgear"
+if [ -d "./vidgear/" ]; then
+    logWarn "Models exists already, not installing!"
+else 
+    git clone https://github.com/abhiTronix/vidgear.git
+    cd vidgear
+    git checkout development
+    pip3 install .
+fi
+
 cd "${DIR}"
 
 log "Done!"

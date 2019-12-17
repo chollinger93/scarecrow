@@ -20,6 +20,11 @@ This project requires:
 ![Pi](./docs/pi.jpg)
 
 ## Install
+
+```
+bash ./sbin/install_tf_vidgear.sh [server/client]
+```
+
 Please see [INSTALL.md](./INSTALL.md) for details.
 
 ## Configuration and data

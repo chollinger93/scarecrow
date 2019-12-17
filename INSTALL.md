@@ -1,7 +1,13 @@
 # Installation
 This needs to be done on both the client (i.e., the raspbery) and the server.
 
-### Raspberry specific
+## Helper
+A convienent installation helper is available as:
+```
+bash ./sbin/install_tf_vidgear.sh [server/client]
+```
+
+## Raspberry specific
 **Only** of you are on a `Raspberry Pi`, run:
 ```
 sudo apt install python3-dev python3-pip python3-venv # Python 3
@@ -20,7 +26,7 @@ See: [https://www.piwheels.org/](https://www.piwheels.org/)
 
 Also see [./sbin/install_raspi.sh](./sbin/install_raspi.sh) for an example on how to set up a new Raspbery.
 
-### General Instructions
+## General Instructions
 
 **Use a virtual environment**
 ```
@@ -32,8 +38,10 @@ Install Object Detection Models:
 ```
 git clone https://github.com/tensorflow/models.git
 cd models/research
+protoc object_detection/protos/*.proto --python_out=.
 python3 setup.py build 
 python3 setup.py install 
+cd ../../
 ```
 
 The project supports multiple ways for playing audio. If you want to use `Gstreamer` and `playsound`:
