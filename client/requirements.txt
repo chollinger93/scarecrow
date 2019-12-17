@@ -5,7 +5,7 @@ opencv-python
 pycocotools
 numpy
 pyzmq
-libopencv-dev 
+opencv-contrib-python==3.4.3.18
 playsound
 pytest
 pygobject

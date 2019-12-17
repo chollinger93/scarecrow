@@ -21,16 +21,17 @@ if [ -d "./debian-scripts/" ]; then
     logWarn "Helper scripts exists already, not installing!"
 else 
     git clone https://github.com/otter-in-a-suit/debian-scripts.git
-    source debian-scripts/util/logging.sh
-    source debian-scripts/util/venv.sh
-    source debian-scripts/util/package_installed.sh
-    ret=$?
-
-    if [[ $ret -ne 0 ]]; then
-        echo "Script installation failed!"
-        exit 1
-    fi
 fi 
+
+source debian-scripts/util/logging.sh
+source debian-scripts/util/venv.sh
+source debian-scripts/util/package_installed.sh
+ret=$?
+
+if [[ $ret -ne 0 ]]; then
+    echo "Script installation failed!"
+    exit 1
+fi
 
 logCol "Creating venv "
 check_create_venv "${DIR}/.."
@@ -44,7 +45,10 @@ fi
 
 logCol "Installing Python dependencies"
 pip3 install -r "../${MODE}/requirements.txt"
-
+if [[ $? -ne 0 ]]; then
+    logErr "Pip Installation failed, please check the logs!"
+    exit 1
+fi
 logCol "Checking for tensorflow models..."
 
 isInstalled protobuf-compiler
@@ -55,16 +59,20 @@ if [[ $? -ne 0 ]]; then
 fi
 
 cd ..
-if [ -d "./models/" ]; then
-    logWarn "Models exists already, not installing!"
+if [[ "${MODE}" == "client" ]]; then
+    logWarn "Client mode, not installing tensorflow"
 else 
-    logCol "Installing Tensorflow Models..."
-    git clone https://github.com/otter-in-a-suit/models.git
-    cd models/research
-    protoc object_detection/protos/*.proto --python_out=.
-    python3 setup.py build 
-    python3 setup.py install 
-fi
+    if [ -d "./models/" ]; then
+        logWarn "Models exists already, not installing!"
+    else 
+        logCol "Installing Tensorflow Models..."
+        git clone https://github.com/otter-in-a-suit/models.git
+        cd models/research
+        protoc object_detection/protos/*.proto --python_out=.
+        python3 setup.py build 
+        python3 setup.py install 
+    fi
+fi 
 
 logCol "Checking for vidgear"
 if [ -d "./vidgears/" ]; then

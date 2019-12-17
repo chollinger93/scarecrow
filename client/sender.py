@@ -11,6 +11,14 @@ import argparse
 import configparser
 
 def run_camera(input_str, address, port, protocol):
+    """Runs the camera, sends messages
+    
+    Args:
+        input_str (str): Path to video file **OR** an `int` for camera input
+        address (str): URL of `OpenCV` server 
+        port (int): Port of `OpenCV` server
+         protocol (str): Protocol of of `OpenCV` server 
+    """
     if input_str.isdigit():
         input = int(input_str)
     else: input = input_str
