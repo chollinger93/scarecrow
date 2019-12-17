@@ -34,6 +34,7 @@ def load_model(model_name):
         untar=True)
 
     model_dir = pathlib.Path(model_dir)/"saved_model"
+    print('Saved to {}'.format(model_dir))
 
     model = tf.saved_model.load(str(model_dir))
     model = model.signatures['serving_default']
@@ -73,7 +74,7 @@ def run_inference_for_single_image(model, image):
     return output_dict
 
 
-def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.5):
+def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7):
     confidence = 0
     avg_confidence = 0
     i = 0
@@ -95,6 +96,7 @@ def run_inference(model, cap, category_index, min_detections=10, min_confidence=
         cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
 
         # print the most likely
+        #print(output_dict['detection_scores'])
         max_label = category_index[1]
         max_score = output_dict['detection_scores'][0]#['name']
         #print(max_label, max_score)
@@ -102,10 +104,11 @@ def run_inference(model, cap, category_index, min_detections=10, min_confidence=
             i += 1
             confidence += max_score
             avg_confidence = confidence/i
-        print('{} {}'.format(i, avg_confidence))
+        print('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
         if i >= min_detections and avg_confidence >= min_confidence:
             print('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(i, avg_confidence))
             i = 0
+            confidence = 0
             avg_confidence = 0
             yield True
 

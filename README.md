@@ -48,6 +48,12 @@ Path=../audio_files
 ```
 For an appropriate path.
 
+If you want to change the `model`, please check the [Model Zoo](https://github.com/otter-in-a-suit/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). The blog article used the outdated `ssd_mobilenet_v1_coco_2017_11_17`.
+
+```
+[Tensorflow]
+ModelUrl=ssd_mobilenet_v3_large_coco_2019_08_14
+```
 
 ## Run
 

@@ -58,11 +58,12 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
             i += 1
             confidence += max_score
             avg_confidence = confidence/i
-        print('{} {}'.format(i, avg_confidence))
+        print('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
         if i >= min_detections and avg_confidence >= min_confidence:
             print('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(
                 i, avg_confidence))
             i = 0
+            confidence = 0
             avg_confidence = 0
             yield True
 
@@ -78,13 +79,12 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
     client.close()
 
 
-def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confidence):
+def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confidence, model_name):
     # List of the strings that is used to add correct label for each box.
     PATH_TO_LABELS = '../models/research/object_detection/data/mscoco_label_map.pbtxt'
     category_index = label_map_util.create_category_index_from_labelmap(
         PATH_TO_LABELS, use_display_name=True)
 
-    model_name = 'ssd_mobilenet_v1_coco_2017_11_17'
     detection_model = load_model(model_name)
 
     for res in receive(category_index, detection_model, address, port, protocol, min_detections, min_confidence):
@@ -98,4 +98,5 @@ if __name__ == "__main__":
     conf.read('../conf/config.ini')
     main(conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocl'],
          conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'], 
-         float(conf['Detection']['min_detections']), float(conf['Detection']['min_confidence']))
+         float(conf['Detection']['min_detections']), float(conf['Detection']['min_confidence']),
+         model_name = conf['Tensorflow']['ModelUrl'])
