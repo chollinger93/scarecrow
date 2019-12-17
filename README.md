@@ -21,7 +21,10 @@ This project requires:
 
 ## Install
 
+A helper script is available:
 ```
+python3 -m venv env
+source env/bin/activate
 bash ./sbin/install_tf_vidgear.sh [server/client]
 ```
 

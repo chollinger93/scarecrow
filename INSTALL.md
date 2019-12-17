@@ -36,7 +36,8 @@ source env/bin/activate
 
 Install Object Detection Models:
 ```
-git clone https://github.com/tensorflow/models.git
+# git clone https://github.com/tensorflow/models.git
+git clone https://github.com/otter-in-a-suit/models.git # Contains bugfix
 cd models/research
 protoc object_detection/protos/*.proto --python_out=.
 python3 setup.py build 
