@@ -14,7 +14,21 @@ from network.messages import Messages
 import configparser
 
 
-def receive(category_index, model, address, port, protocol, min_detections=10, min_confidence=0.3):
+def receive(category_index, model, address, port, protocol, min_detections=10, min_confidence=0.7):
+    """Main receiver loop for network detection
+    
+    Args:
+        category_index (category_index): category_index
+        model (model): Model to use
+        address (str): URL of `OpenCV` sender / Pi
+        port (int): Port of `OpenCV` sender / Pi
+        protocol (str): Protocol of of `OpenCV` sender / Pi
+        min_detections (int, optional): Minimum detections required to yield a positive result. Defaults to 10.
+        min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
+    
+    Yields:
+        bool: True for a successful detection
+    """
     client = NetGear(address=address, port=str(port), protocol=protocol,
                      pattern=0, receive_mode=True, logging=True)  # Define netgear client at Server IP address.
 

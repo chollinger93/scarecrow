@@ -4,6 +4,12 @@ from . import messages
 
 
 def send_command(server, port, *args):
+    """Sends a command via `ZMQ`
+    
+    Args:
+        server (str): Server address
+        port (int): Server port
+    """
     context = zmq.Context()
 
     socket = context.socket(zmq.REQ)
@@ -18,7 +24,17 @@ def send_command(server, port, *args):
         print('Received response: {}'.format(response))
 
 
-def start_sender_thread(server, port, audio_path, msg=messages.Messages.WARN):
+def start_sender_thread(server, port, msg=messages.Messages.WARN):
+    """Starts a sender thread for non-blocking network I/O
+    
+    Args:
+        server (str): Server address
+        port (int): Server port
+        msg (messages.Messages, optional): Message type. Defaults to messages.Messages.WARN.
+    
+    Returns:
+        Process: Process
+    """
     # TODO: *args msg
     print('Starting sender thread')
     p = mp.Process(target=send_command, args=(server, port, msg, ))

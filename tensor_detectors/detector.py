@@ -19,6 +19,14 @@ sys.path.append('../models/research/object_detection')
 
 
 def load_model(model_name):
+    """Downloads a model from `download.tensorflow.org`
+    
+    Args:
+        model_name (str): Model name
+    
+    Returns:
+        model: Downloaded model
+    """
     base_url = 'http://download.tensorflow.org/models/object_detection/'
     model_file = model_name + '.tar.gz'
     model_dir = tf.keras.utils.get_file(
@@ -36,6 +44,15 @@ def load_model(model_name):
 
 
 def run_inference_for_single_image(model, image):
+    """Runs detection on a single image
+    
+    Args:
+        model (model): Model
+        image (byte): Numpy image array
+    
+    Returns:
+        dict: output_dict with labels/confidence
+    """
     image = np.asarray(image)
     # The input needs to be a tensor, convert it using `tf.convert_to_tensor`.
     input_tensor = tf.convert_to_tensor(image)
@@ -71,6 +88,22 @@ def run_inference_for_single_image(model, image):
 
 
 def detect(model, category_index, image_np, i, confidence, min_detections=10, min_confidence=0.7):
+    """Detection loop main method
+
+    Runs actual detection
+    
+    Args:
+        model (model): Model to use
+        category_index (category_index): category_index
+        image (byte): Numpy image array
+        i (int): Iterator
+        confidence (float): Previous confidence
+        min_detections (int, optional): Minimum detections required to yield a positive result. Defaults to 10.
+        min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
+    
+    Returns:
+        (bool, int, float): Tuple with detection threshold, iterator, confidence
+    """
     # Actual detection.
     output_dict = run_inference_for_single_image(model, image_np)
     # Visualization of the results of a detection.
@@ -107,6 +140,15 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
 
 
 def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7):
+    """Runs a local detection loop, based on the `OpenCV` cap
+    
+    Args:
+        model (model): Model to use
+        cap (cap): `OpenCV` cap
+        category_index (category_index): category_index
+        min_detections (int, optional): Minimum detections required to yield a positive result. Defaults to 10.
+        min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
+    """
     confidence = 0
     i = 0
     while(cap.isOpened()):
