@@ -1,35 +1,28 @@
+import cv2
+import pathlib
+from object_detection.utils import visualization_utils as vis_util
+from object_detection.utils import label_map_util
+from object_detection.utils import ops as utils_ops
+from PIL import Image
+from matplotlib import pyplot as plt
+from io import StringIO
+from collections import defaultdict
+import zipfile
+import tensorflow as tf
+import tarfile
+import six.moves.urllib as urllib
+import os
+import numpy as np
+from audio import player
 import sys
 sys.path.append('../models/research/object_detection')
-
-from audio import player
-
-import numpy as np
-import os
-import six.moves.urllib as urllib
-import sys
-import tarfile
-import tensorflow as tf
-import zipfile
-
-from collections import defaultdict
-from io import StringIO
-from matplotlib import pyplot as plt
-from PIL import Image
-
-from object_detection.utils import ops as utils_ops
-from object_detection.utils import label_map_util
-from object_detection.utils import visualization_utils as vis_util
-
-import os
-import pathlib
-import cv2
 
 
 def load_model(model_name):
     base_url = 'http://download.tensorflow.org/models/object_detection/'
     model_file = model_name + '.tar.gz'
     model_dir = tf.keras.utils.get_file(
-        fname=model_name, 
+        fname=model_name,
         origin=base_url + model_file,
         untar=True)
 
@@ -41,13 +34,14 @@ def load_model(model_name):
 
     return model
 
+
 def run_inference_for_single_image(model, image):
     image = np.asarray(image)
     # The input needs to be a tensor, convert it using `tf.convert_to_tensor`.
     input_tensor = tf.convert_to_tensor(image)
     # The model expects a batch of images, so add an axis with `tf.newaxis`.
-    input_tensor = input_tensor[tf.newaxis,...]
-    
+    input_tensor = input_tensor[tf.newaxis, ...]
+
     # Run inference
     output_dict = model(input_tensor)
 
@@ -55,65 +49,85 @@ def run_inference_for_single_image(model, image):
     # Convert to numpy arrays, and take index [0] to remove the batch dimension.
     # We're only interested in the first num_detections.
     num_detections = int(output_dict.pop('num_detections'))
-    output_dict = {key:value[0, :num_detections].numpy() 
-                   for key,value in output_dict.items()}
+    output_dict = {key: value[0, :num_detections].numpy()
+                   for key, value in output_dict.items()}
     output_dict['num_detections'] = num_detections
 
     # detection_classes should be ints.
-    output_dict['detection_classes'] = output_dict['detection_classes'].astype(np.int64)
-   
+    output_dict['detection_classes'] = output_dict['detection_classes'].astype(
+        np.int64)
+
     # Handle models with masks:
     if 'detection_masks' in output_dict:
         # Reframe the the bbox mask to the image size.
         detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(
-                                    output_dict['detection_masks'], output_dict['detection_boxes'],
-                                    image.shape[0], image.shape[1])      
-        detection_masks_reframed = tf.cast(detection_masks_reframed > 0.5, tf.uint8)
+            output_dict['detection_masks'], output_dict['detection_boxes'],
+            image.shape[0], image.shape[1])
+        detection_masks_reframed = tf.cast(
+            detection_masks_reframed > 0.5, tf.uint8)
         output_dict['detection_masks_reframed'] = detection_masks_reframed.numpy()
-    
+
     return output_dict
+
+
+def detect(model, category_index, image_np, i, confidence, min_detections=10, min_confidence=0.7):
+    # Actual detection.
+    output_dict = run_inference_for_single_image(model, image_np)
+    # Visualization of the results of a detection.
+    vis_util.visualize_boxes_and_labels_on_image_array(
+        image_np,
+        output_dict['detection_boxes'],
+        output_dict['detection_classes'],
+        output_dict['detection_scores'],
+        category_index,
+        instance_masks=output_dict.get('detection_masks_reframed', None),
+        use_normalized_coordinates=True,
+        line_thickness=8)
+
+    cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
+    # print the most likely
+    if 'detection_scores' not in output_dict or len(category_index) < 1 or len(output_dict['detection_scores']) <= 0:
+        return (False, i, confidence)
+    max_label = category_index[1]
+    max_score = output_dict['detection_scores'][0]  # ['name']
+    if max_label['name'] == 'person':
+        i += 1
+        confidence += max_score
+        avg_confidence = confidence/i
+    print('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
+    if i >= min_detections and avg_confidence >= min_confidence:
+        print('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(
+            i, avg_confidence))
+        i = 0
+        confidence = 0
+        avg_confidence = 0
+        return (True, i, confidence)
+    else:
+        return (False, i, confidence)
 
 
 def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7):
     confidence = 0
-    avg_confidence = 0
     i = 0
     while(cap.isOpened()):
         ret, image_np = cap.read()
-        #print(image_np)
-        # Actual detection.
-        output_dict = run_inference_for_single_image(model, image_np)
-        # Visualization of the results of a detection.
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            image_np,
-            output_dict['detection_boxes'],
-            output_dict['detection_classes'],
-            output_dict['detection_scores'],
-            category_index,
-            instance_masks=output_dict.get('detection_masks_reframed', None),
-            use_normalized_coordinates=True,
-            line_thickness=8)
-        cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
-
-        # print the most likely
-        #print(output_dict['detection_scores'])
-        max_label = category_index[1]
-        max_score = output_dict['detection_scores'][0]#['name']
-        #print(max_label, max_score)
-        if max_label['name'] == 'person':
-            i += 1
-            confidence += max_score
-            avg_confidence = confidence/i
-        print('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
-        if i >= min_detections and avg_confidence >= min_confidence:
-            print('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(i, avg_confidence))
-            i = 0
-            confidence = 0
-            avg_confidence = 0
-            yield True
-
-        # Quit on pressing q
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            cap.release()
-            cv2.destroyAllWindows()
+        
+        if image_np is None:
+            # if True break the infinite loop
             break
+
+        # Actual detection.
+        res, i, confidence = detect(model, category_index, image_np,
+                                    i, confidence,
+                                    min_detections, min_confidence)
+        if res:
+            print('Detected')
+        # check for 'q' key-press
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            # if 'q' key-pressed break out
+            break
+
+    # close output window
+    cv2.destroyAllWindows()
+

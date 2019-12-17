@@ -1,33 +1,28 @@
-# import libraries
 import sys
 sys.path.append('..')
-import configparser
-from network.messages import Messages
-from network.sender import send_command, start_sender_thread
-from tensor_detectors.detector import run_inference_for_single_image, load_model
-from vidgear.gears import NetGear
-import cv2
-import multiprocessing
 
-from object_detection.utils import ops as utils_ops
-from object_detection.utils import label_map_util
-from object_detection.utils import visualization_utils as vis_util
 import numpy as np
-
+from object_detection.utils import visualization_utils as vis_util
+from object_detection.utils import label_map_util
+from object_detection.utils import ops as utils_ops
+import multiprocessing
+import cv2
+from vidgear.gears import NetGear
+from tensor_detectors.detector import run_inference_for_single_image, load_model, detect
+from network.sender import send_command, start_sender_thread
+from network.messages import Messages
+import configparser
 
 
 def receive(category_index, model, address, port, protocol, min_detections=10, min_confidence=0.3):
-    # define netgear client with `receive_mode = True` and default settings
-    #client = NetGear(receive_mode=True)
     client = NetGear(address=address, port=str(port), protocol=protocol,
                      pattern=0, receive_mode=True, logging=True)  # Define netgear client at Server IP address.
 
     # For detection thresholds
     confidence = 0
-    avg_confidence = 0
     i = 0
     # infinite loop
-    while True: # TODO: FPS limit
+    while True:  # TODO: FPS limit
         # receive frames from network
         frame = client.recv()
         # print(image_np)
@@ -37,36 +32,12 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
         if image_np is None:
             # if True break the infinite loop
             break
-        # Actual detection.
-        output_dict = run_inference_for_single_image(model, image_np)
-        # Visualization of the results of a detection.
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            image_np,
-            output_dict['detection_boxes'],
-            output_dict['detection_classes'],
-            output_dict['detection_scores'],
-            category_index,
-            instance_masks=output_dict.get('detection_masks_reframed', None),
-            use_normalized_coordinates=True,
-            line_thickness=8)
 
-        cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
-        # print the most likely
-        if 'detection_scores' not in output_dict or len(category_index) < 1 or len(output_dict['detection_scores']) <= 0:
-            continue
-        max_label = category_index[1]
-        max_score = output_dict['detection_scores'][0]  # ['name']
-        if max_label['name'] == 'person':
-            i += 1
-            confidence += max_score
-            avg_confidence = confidence/i
-        print('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
-        if i >= min_detections and avg_confidence >= min_confidence:
-            print('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(
-                i, avg_confidence))
-            i = 0
-            confidence = 0
-            avg_confidence = 0
+        # Actual detection.
+        res, i, confidence = detect(model, category_index, image_np,
+                                    i, confidence,
+                                    min_detections, min_confidence)
+        if res:
             yield True
 
         key = cv2.waitKey(1) & 0xFF
@@ -102,7 +73,8 @@ if __name__ == "__main__":
     conf = configparser.ConfigParser()
     conf.read('../conf/config.ini')
     main(conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocl'],
-         conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'], 
-         float(conf['Detection']['min_detections']), float(conf['Detection']['min_confidence']),
-         model_name = conf['Tensorflow']['ModelUrl'], 
+         conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'],
+         float(conf['Detection']['min_detections']), float(
+             conf['Detection']['min_confidence']),
+         model_name=conf['Tensorflow']['ModelUrl'],
          use_sender_thread=conf.getboolean('General', 'UseSenderThread'))
