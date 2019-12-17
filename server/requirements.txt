@@ -1,4 +1,4 @@
-tensorflow=="2.*"
+tensorflow>="2.*"
 pillow 
 lxml
 matplotlib 
@@ -7,7 +7,7 @@ pycocotools
 numpy
 #vidgear
 pyzmq
-libopencv-dev 
+libopencv 
 playsound
 pytest
 pygobject

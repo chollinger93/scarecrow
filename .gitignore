@@ -5,11 +5,14 @@ videos/*
 audio_files/*
 .vscode/
 blog_snapshots/*
+sbin/debian-scripts/
+vidgear/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
+*setup*.py
 # C extensions
 *.so
 
