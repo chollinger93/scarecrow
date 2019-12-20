@@ -40,7 +40,7 @@ def receive_messages(server, port, audio_path,  streamer, *args):
         socket.send(b'Ack')
 
 def start_zmq_thread(server, port, audio_path, streamer='pygame', msg=messages.Messages.WARN):
-    """[summary]
+    """Starts a ZMQ listener thread
     
     Args:
         server (str): Server address
