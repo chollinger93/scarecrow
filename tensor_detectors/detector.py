@@ -14,6 +14,7 @@ import six.moves.urllib as urllib
 import os
 import numpy as np
 from audio import player
+import time
 import sys
 sys.path.append('../models/research/object_detection')
 
@@ -139,7 +140,7 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
         return (False, i, confidence)
 
 
-def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7):
+def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7, fps=25):
     """Runs a local detection loop, based on the `OpenCV` cap
     
     Args:
@@ -148,15 +149,23 @@ def run_inference(model, cap, category_index, min_detections=10, min_confidence=
         category_index (category_index): category_index
         min_detections (int, optional): Minimum detections required to yield a positive result. Defaults to 10.
         min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
+        fps (int, optional): Framerate for video capture. Defaults to 25.
     """
     confidence = 0
     i = 0
+    # FPS limiter - only for video streams
+    print('Changing framerate from {} to {}'.format(cap.get(cv2.CAP_PROP_FPS), fps))
+    #cap.set(cv2.CAP_PROP_FPS, fps)
     while(cap.isOpened()):
         ret, image_np = cap.read()
+        print('Ret: {}'.format(ret))
         
         if image_np is None:
-            # if True break the infinite loop
+            print('Image is none')
             break
+
+        # FPS limit
+        cv2.waitKey(int( (1 / int(fps)) * 1000))
 
         # Actual detection.
         res, i, confidence = detect(model, category_index, image_np,
@@ -164,6 +173,8 @@ def run_inference(model, cap, category_index, min_detections=10, min_confidence=
                                     min_detections, min_confidence)
         if res:
             print('Detected')
+            yield True
+
         # check for 'q' key-press
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):

@@ -5,26 +5,28 @@ from vidgear.gears import NetGear
 import sys
 sys.path.append('..')
 from utilities.utils import *
-from network.server import start_zmq_thread
+from plugin_base.utils import *
 
 import argparse
 import configparser
+import time 
 
-def run_camera(input_str, address, port, protocol):
+def run_camera(input_str, address, port, protocol, fps=25):
     """Runs the camera, sends messages
     
     Args:
         input_str (str): Path to video file **OR** an `int` for camera input
         address (str): URL of `OpenCV` server 
         port (int): Port of `OpenCV` server
-         protocol (str): Protocol of of `OpenCV` server 
+        protocol (str): Protocol of of `OpenCV` server 
+        fps (int, optional): Framerate for video capture. Defaults to 25.
     """
     if input_str.isdigit():
         input = int(input_str)
     else: input = input_str
 
-    # Open any video stream
-    stream = VideoGear(source=input).start()
+    # Open any video stream; `framerate` here is just for picamera
+    stream = VideoGear(source=input, framerate=fps).start()
     # server = NetGear() # Locally
     server = NetGear(address=address, port=port, protocol=protocol,
                     pattern=0, receive_mode=False, logging=True) 
@@ -33,14 +35,10 @@ def run_camera(input_str, address, port, protocol):
     while True:
         try:
             frame = stream.read()
-            # read frames
-
             # check if frame is None
             if frame is None:
-                # if True break the infinite loop
+                print('No frame available')
                 break
-
-            # do something with frame here
 
             # send frame to server
             server.send(frame)
@@ -63,8 +61,8 @@ if __name__ == "__main__":
     conf = configparser.ConfigParser()
     conf.read('../conf/config.ini')
 
-    # Audio ZMQ thread
-    start_zmq_thread(conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['Audio']['Path'], conf['Audio']['Streamer'])
+    # Plugin ZMQ threads
+    start_receiver_plugins(load_plugins(conf['Plugins']['Enabled'].split(',')))
 
     print('Starting camera stream')
-    run_camera(args.in_file, conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocl'])
+    run_camera(args.in_file, conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['ZmqServer']['Protocol'], int(conf['Video']['FPS']))
