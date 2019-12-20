@@ -43,8 +43,8 @@ class ZmqBasePlugin:
             self.__class__.__name__))
         context = zmq.Context()
         socket = context.socket(zmq.REP)
-        print('Binding to {}'.format(self.recv_server))
-        socket.bind('tcp://*:{}'.format(self.recv_port))
+        print('Binding to {}'.format(self.send_server))
+        socket.bind('tcp://*:{}'.format(self.send_port))
         while True:
             #  Wait for next request from client
             message = socket.recv()
@@ -57,7 +57,7 @@ class ZmqBasePlugin:
         """
         context = zmq.Context()
         socket = context.socket(zmq.REQ)
-        socket.connect('tcp://{}:{}'.format(self.send_server, self.send_port))
+        socket.connect('tcp://{}:{}'.format(self.recv_server, self.recv_port))
         self.send(socket)
         self.on_ack(socket)
 
@@ -69,7 +69,7 @@ class ZmqBasePlugin:
         """
         print('send is not implemented in {}'.format(self.__class__.__name__))
         msg = 'no_implemented'
-        print('Sending message {} to server {}:{}'.format(msg, self.send_server, self.send_port))
+        print('Sending message {} to server {}:{}'.format(msg, self.recv_server, self.recv_port))
         socket.send_string(msg)
 
 

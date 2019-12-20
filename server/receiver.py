@@ -66,7 +66,7 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
     client.close()
 
 
-def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confidence, model_name, use_sender_thread, plugins):
+def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_name, use_sender_thread, plugins):
     # List of the strings that is used to add correct label for each box.
     PATH_TO_LABELS = '../models/research/object_detection/data/mscoco_label_map.pbtxt'
     category_index = label_map_util.create_category_index_from_labelmap(
@@ -76,7 +76,7 @@ def main(address, port, protocol, zmq_ip, zmq_port, min_detections, min_confiden
 
     # Plugins
     plugins = load_plugins(plugins=plugins)
-    for res in receive(category_index, detection_model, address, port, protocol, min_detections, min_confidence):
+    for res in receive(category_index, detection_model, zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence):
         print('Received signal')
         if use_sender_thread:
             send_async_messages(plugins)
@@ -88,10 +88,11 @@ if __name__ == "__main__":
     # Conf
     conf = configparser.ConfigParser()
     conf.read('../conf/config.ini')
-    main(conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocol'],
-         conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'],
-         float(conf['Detection']['min_detections']), 
-         float(conf['Detection']['min_confidence']),
-         model_name=conf['Tensorflow']['ModelUrl'],
-         use_sender_thread=conf.getboolean('General', 'UseSenderThread'),
-         plugins=conf['Plugins']['Enabled'].split(','))
+    main(conf['ZmqServer']['IP'], 
+        conf['ZmqServer']['Port'],
+        conf['ZmqServer']['Protocol'],
+        float(conf['Detection']['min_detections']), 
+        float(conf['Detection']['min_confidence']),
+        model_name=conf['Tensorflow']['ModelUrl'],
+        use_sender_thread=conf.getboolean('Plugins', 'UseSenderThread'),
+        plugins=conf['Plugins']['Enabled'].split(','))

@@ -65,4 +65,4 @@ if __name__ == "__main__":
     start_receiver_plugins(load_plugins(conf['Plugins']['Enabled'].split(',')))
 
     print('Starting camera stream')
-    run_camera(args.in_file, conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocol'], int(conf['Video']['FPS']))
+    run_camera(args.in_file, conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['ZmqServer']['Protocol'], int(conf['Video']['FPS']))
