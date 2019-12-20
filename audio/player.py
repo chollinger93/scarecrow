@@ -17,5 +17,7 @@ def play_sound(input, streamer='pygame'):
     elif streamer == 'os':
         import subprocess
         subprocess.call(['omxplayer', input])
+    elif streamer == 'none':
+        return 
     else:
         raise NotImplementedError

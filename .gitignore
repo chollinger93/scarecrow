@@ -7,6 +7,7 @@ audio_files/*
 blog_snapshots/*
 sbin/debian-scripts/
 vidgear/
+testbench/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

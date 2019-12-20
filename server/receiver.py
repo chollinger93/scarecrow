@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # Conf
     conf = configparser.ConfigParser()
     conf.read('../conf/config.ini')
-    main(conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocl'],
+    main(conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocol'],
          conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'],
          float(conf['Detection']['min_detections']), float(
              conf['Detection']['min_confidence']),
