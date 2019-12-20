@@ -10,9 +10,18 @@ from plugins.audio import AudioPlugin
 __allowed_plugins__ = {
     'audio': AudioPlugin
 }
-plugins = ['audio']
 
-def load_plugins():
+# Read config
+
+def load_plugins(plugins):
+    """Loads all plugins defined in `__allowed_plugins__`
+    
+    Raises:
+        NotImplementedError: If an invalid plugin was specified
+    
+    Returns:
+        list: loaded_plugins
+    """
     # Load plugins
     loaded_plugins = []
     for plugin in plugins:
@@ -30,6 +39,14 @@ def load_plugins():
 
 
 def start_receiver_plugins(loaded_plugins):
+    """Starts the daemon threads for the receiver plugins
+    
+    Args:
+        loaded_plugins (list): loaded_plugins
+    
+    Returns:
+        list: Started processes
+    """
     # Execution
     procs = []
     for plugin in loaded_plugins:
@@ -41,5 +58,22 @@ def start_receiver_plugins(loaded_plugins):
     return procs
 
 def send_messages(loaded_plugins):
+    """Sends a message across all plugins
+    
+    Args:
+        loaded_plugins (list): loaded_plugins
+    """
     for se in loaded_plugins:
         se.start_sender()
+
+def send_async_messages(loaded_plugins):
+    """Starts a separate thread to send all messages
+    
+    Args:
+        loaded_plugins (list): loaded_plugins
+    """
+    for se in loaded_plugins:
+        p = mp.Process(target=se.start_sender)
+        # Set as daemon, so it gets killed alongside the parent
+        p.daemon = True
+        p.start()

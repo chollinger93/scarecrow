@@ -5,11 +5,12 @@ from vidgear.gears import NetGear
 import sys
 sys.path.append('..')
 from utilities.utils import *
-from network.server import start_zmq_thread
+from plugin_base.utils import *
 
 import argparse
 import configparser
 import time 
+
 def run_camera(input_str, address, port, protocol, fps=25):
     """Runs the camera, sends messages
     
@@ -60,8 +61,8 @@ if __name__ == "__main__":
     conf = configparser.ConfigParser()
     conf.read('../conf/config.ini')
 
-    # Audio ZMQ thread
-    start_zmq_thread(conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['Audio']['Path'], conf['Audio']['Streamer'])
+    # Plugin ZMQ threads
+    start_receiver_plugins(load_plugins(conf['Plugins']['Enabled'].split(',')))
 
     print('Starting camera stream')
     run_camera(args.in_file, conf['Video']['IP'], conf['Video']['Port'], conf['Video']['Protocol'], int(conf['Video']['FPS']))

@@ -2,12 +2,10 @@ import sys
 sys.path.append('./models/research/object_detection')
 sys.path.append('./tensor_detectors')
 from network.messages import Messages
-from network.sender import send_command
 from tensor_detectors.detector import load_model, label_map_util, run_inference
 import configparser
 import argparse
 import cv2
-
 
 
 if __name__ == "__main__":
@@ -45,4 +43,3 @@ if __name__ == "__main__":
                                  conf['Detection']['min_confidence']),
                              fps=int(conf['Video']['FPS'])):
         print('Received signal')
-        #send_command(conf['ZmqCamera']['IP'], conf['ZmqCamera']['Port'], Messages.WARN)

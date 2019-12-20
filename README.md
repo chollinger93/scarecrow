@@ -1,5 +1,7 @@
 # Scarecrow-Cam
-A `Raspberry Pi` powered edge-computing camera setups that runs a `Tensorflow` object detection model to determine whether a person is on the camera and plays loud audio to scare them off. 
+A `Raspberry Pi` powered, distributed (edge) computing camera setups that runs a `Tensorflow` object detection model to determine whether a person is on the camera. The `Raspberry Pi` is used for video streaming and triggering actions (such as playing audio, turning on lights, or triggering an Arduino), whereas a server or laptop runs the object detection. With a suitable `TFLite` installation, this can happen locally on the `Raspberry` as well.
+
+Based on the detection criteria, a **plugin model** allows to trigger downstream actions.
 
 *Based on my [blog](https://chollinger.com/blog/2019/12/tensorflow-on-edge-building-a-smar-security-camera-with-a-raspberry-pi/).*
 
@@ -8,9 +10,9 @@ A `Raspberry Pi` powered edge-computing camera setups that runs a `Tensorflow` o
 
 ![Sample](./docs/cam_1.png)
 
-The setup shown here only fits the use-case of `edge` to a degree, as we run local detection on a separate machine; technically, the Raspberry Pi is capable of running Tensorflow on board, e.g. through `TFLite` or `esp32cam`. 
+**Side note**: *The setup shown here only fits the use-case of `edge` to a degree, as we run local detection on a separate machine; technically, the Raspberry Pi is capable of running Tensorflow on board, e.g. through `TFLite` or `esp32cam`.*
 
-You can change this behavior by relying on a local `tensorflor` instance and having the `ZMQ` communication run over `localhost`.
+*You can change this behavior by relying on a local `tensorflor` instance and having the `ZMQ` communication run over `localhost`.*
 
 ## Requirements
 This project requires:
@@ -22,6 +24,8 @@ This project requires:
 ## Install
 
 A helper script is available:
+
+**Use a virtual environment**
 ```
 python3 -m venv env
 source env/bin/activate
@@ -32,15 +36,9 @@ Please see [INSTALL.md](./INSTALL.md) for details.
 
 ## Configuration and data
 
-**Use a virtual environment**
-```
-python3 -m venv env
-source env/bin/activate
-```
-
 Edit the `conf/config.ini` with the settings for your Raspberry and server.
 
-For playing audio, please adjust
+For playing audio, please adjust `conf/plugins.d/audio.ini`.
 
 ```
 [Audio]
@@ -67,6 +65,22 @@ python3 $PROJECT_LOCATION/client/sender.py --input '/path/to/video' # for local 
 ```
 python3 $PROJECT_LOCATION/server/receiver.py
 ```
+
+## Plugins
+A plugin model allows to trigger downstream actions. These actions are triggered based on the configuration.
+
+Plugins can be enabled by setting the following in `config.ini`:
+```
+[Plugins]
+Enabled=audio
+Disabled=
+```
+
+Currently, the following plugins are avaibale:
+
+| Plugin | Description                                 | Requirements                                 | Configuration              | Base  |
+|--------|---------------------------------------------|----------------------------------------------|----------------------------|-------|
+| audio  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
 
 ## License
 This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details.
