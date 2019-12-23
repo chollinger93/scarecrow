@@ -79,3 +79,9 @@ cd vidgear
 git checkout development
 pip3 install .
 ```
+
+## Unit tests
+```
+cd ./tests # TODO: fix paths
+pytest --cov-report html --cov=.. --cov-config=../.coveragerc ./*.py 
+```

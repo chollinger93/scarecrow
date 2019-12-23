@@ -82,17 +82,20 @@ def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_n
             send_async_messages(plugins)
         else:
             send_messages(plugins)
+        # For downstream
+        yield res 
 
 
 if __name__ == "__main__":
     # Conf
     conf = configparser.ConfigParser()
     conf.read('../conf/config.ini')
-    main(conf['ZmqServer']['IP'], 
+    for res in main(conf['ZmqServer']['IP'], 
         conf['ZmqServer']['Port'],
         conf['ZmqServer']['Protocol'],
         float(conf['Detection']['min_detections']), 
         float(conf['Detection']['min_confidence']),
         model_name=conf['Tensorflow']['ModelUrl'],
         use_sender_thread=conf.getboolean('Plugins', 'UseSenderThread'),
-        plugins=conf['Plugins']['Enabled'].split(','))
+        plugins=conf['Plugins']['Enabled'].split(',')):
+            pass

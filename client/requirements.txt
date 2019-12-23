@@ -8,5 +8,6 @@ pyzmq
 opencv-contrib-python==3.4.3.18
 playsound
 pytest
+pytest-cov
 pygobject
 pygame

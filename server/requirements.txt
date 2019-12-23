@@ -10,4 +10,5 @@ pyzmq
 libopencv 
 playsound
 pytest
+pytest-cov
 pygobject
