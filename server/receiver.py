@@ -95,18 +95,20 @@ def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_n
 if __name__ == "__main__":
     # Args
     parser = argparse.ArgumentParser(description='Runs local image detection')
-    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=False, default='../conf',
+    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=False,
                     help='Path to config dir')
     args = parser.parse_args()
     # Conf
     conf = configparser.ConfigParser()
     conf_path = args.conf_path
+
     if conf_path is None:
         conf_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../conf/')
         conf_path_core = '{}{}'.format(conf_path, 'config.ini')
         logger.warning('No conf path, using {}'.format(conf_path_core))
         conf.read(conf_path_core)
     else:
+        conf_path = '../conf'
         conf.read('{}/config.ini'.format(conf_path))
 
     for res in main(conf['ZmqServer']['IP'], 
