@@ -103,12 +103,12 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
         min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
     
     Returns:
-        (bool, int, float): Tuple with detection threshold, iterator, confidence
+        (bool, int, float, np_aray): Tuple with detection threshold, iterator, confidence, image with labels
     """
     # Actual detection.
     output_dict = run_inference_for_single_image(model, image_np)
     # Visualization of the results of a detection.
-    vis_util.visualize_boxes_and_labels_on_image_array(
+    np_det_img = vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
         output_dict['detection_boxes'],
         output_dict['detection_classes'],
@@ -135,9 +135,9 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
         i = 0
         confidence = 0
         avg_confidence = 0
-        return (True, i, confidence)
+        return (True, i, confidence, np_det_img)
     else:
-        return (False, i, confidence)
+        return (False, i, confidence, np_det_img)
 
 
 def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7, fps=25):
@@ -168,7 +168,7 @@ def run_inference(model, cap, category_index, min_detections=10, min_confidence=
         cv2.waitKey(int( (1 / int(fps)) * 1000))
 
         # Actual detection.
-        res, i, confidence = detect(model, category_index, image_np,
+        res, i, confidence, np_det_img = detect(model, category_index, image_np,
                                     i, confidence,
                                     min_detections, min_confidence)
         if res:

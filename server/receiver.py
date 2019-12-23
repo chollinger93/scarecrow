@@ -14,7 +14,7 @@ from plugin_base.utils import *
 import configparser
 
 
-def receive(category_index, model, address, port, protocol, min_detections=10, min_confidence=0.7):
+def receive(category_index, model, address, port, protocol, min_detections=10, min_confidence=0.7, server_plugins={}):
     """Main receiver loop for network detection
     
     Args:
@@ -47,12 +47,18 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
             # if True break the infinite loop
             break
 
+        # Server plugins - before
+        run_image_detector_plugins_before(server_plugins, image_np)
+
         # Actual detection.
-        res, i, confidence = detect(model, category_index, image_np,
+        res, i, confidence, np_det_img = detect(model, category_index, image_np,
                                     i, confidence,
                                     min_detections, min_confidence)
         if res:
             yield True
+
+        # Server plugins - after
+        run_image_detector_plugins_after(server_plugins, res, i, confidence, np_det_img)
 
         key = cv2.waitKey(1) & 0xFF
         # check for 'q' key-press
@@ -74,14 +80,14 @@ def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_n
 
     detection_model = load_model(model_name)
 
-    # Plugins
-    plugins = load_plugins(plugins=plugins)
-    for res in receive(category_index, detection_model, zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence):
+    # Client Plugins
+    loaded_plugins = load_plugins(plugins=plugins)
+    for res in receive(category_index, detection_model, zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, loaded_plugins):
         print('Received signal')
         if use_sender_thread:
-            send_async_messages(plugins)
+            send_async_messages(loaded_plugins)
         else:
-            send_messages(plugins)
+            send_messages(loaded_plugins)
         # For downstream
         yield res 
 
