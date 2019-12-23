@@ -29,7 +29,7 @@ def zmq_receiver(zmq_args):
 
 
 def test_run_camera(zmq_args, zmq_receiver):
-    p = mp.Process(target=run_camera, args=('./resources/walking_test_5s.mp4',
+    p = mp.Process(target=run_camera, args=('tests/resources/walking_test_5s.mp4',
                                             zmq_args['ip'],
                                             zmq_args['port'],
                                             zmq_args['protocol'],

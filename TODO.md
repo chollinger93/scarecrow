@@ -1,12 +1,12 @@
 # TODO
 
 ## Overall
-* Implement logger
+* ~~Implement logger~~
 
 ## Code Quality
 * Set up `pytest-cov` to cover multiprocessing
-* Re-organize configs / relative paths
-* Fix python path and module structure
+* ~~Re-organize configs / relative paths~~
+* ~~Fix python path and module structure~~
 * Fix all paths
 
 ## Features

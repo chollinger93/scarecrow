@@ -9,8 +9,8 @@ from utilities.utils import get_logger
 logger = get_logger()
 
 
-def load_numpy_img(inf='./resources/test_img.jpg'):
-    img = Image.open('./resources/test_img.jpg')
+def load_numpy_img(inf='tests/resources/test_img.jpg'):
+    img = Image.open('tests/resources/test_img.jpg')
     return np.array(img)
 
 
@@ -31,7 +31,7 @@ ns = {}
 
 
 def test_load_plugins(plugs):
-    plugins = load_plugins(plugs, './resources/plugins.d')
+    plugins = load_plugins(plugs, 'tests/resources/plugins.d')
     logger.info(plugins)
     assert 'ZmqBasePlugin' in plugins
     assert len(plugins['ZmqBasePlugin']) == 1
@@ -55,17 +55,18 @@ def test_run_image_detector_plugins_before(plugs):
 
 def test_run_image_detector_plugins_after(plugs):
     run_image_detector_plugins_after(
-        ns['loaded_plugins'], True, 0, .5, load_numpy_img('./resources/test_img_labels.jpg'))
+        ns['loaded_plugins'], True, 0, .5, load_numpy_img('tests/resources/test_img_labels.jpg'))
 
 
 def test_run_image_detector_plugins_after_loop(plugs):
     conf = configparser.ConfigParser()
-    conf.read('../conf/plugins.d/{}.ini'.format('store_video'))
+    conf.read('tests/resources/plugins.d/{}.ini'.format('store_video'))
     out_path = conf['Video']['Path']
 
+    # Remove old files
     rm_files_in_tree(out_path)
 
-    cap = cv2.VideoCapture('./resources/walking_test_5s.mp4')
+    cap = cv2.VideoCapture('tests/resources/walking_test_5s.mp4')
     ix = 0
     while(cap.isOpened()):
         ret, image_np = cap.read()

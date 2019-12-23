@@ -13,7 +13,6 @@ import tarfile
 import six.moves.urllib as urllib
 import os
 import numpy as np
-from audio import player
 import time
 from utilities.utils import get_logger
 logger = get_logger()

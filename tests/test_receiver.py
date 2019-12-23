@@ -20,7 +20,7 @@ def zmq_args():
 
 @pytest.fixture
 def zmq_sender(zmq_args):
-    stream = VideoGear(source='./resources/walking_test_5s.mp4',
+    stream = VideoGear(source='tests/resources/walking_test_5s.mp4',
                        framerate=zmq_args['fps']).start()
     server = NetGear(address=zmq_args['ip'], port=zmq_args['port'],
                      protocol=zmq_args['protocol'],
@@ -39,7 +39,7 @@ def __main_proc_wrap__(ip, port, protocol, min_detections, min_confidence, model
         'res': 0,
         'det': 0
     }
-    for res in main(ip, port, protocol, min_detections, min_confidence, model_name, False, plugins, conf_path='../conf/plugins.d'):
+    for res in main(ip, port, protocol, min_detections, min_confidence, model_name, False, plugins, conf_path='tests/conf/plugins.d'):
         logger.info('Got res {}'.format(res))
         __res__['res'] += 1
         if res:

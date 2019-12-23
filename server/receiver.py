@@ -74,7 +74,7 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
 
 def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_name, use_sender_thread, plugins, conf_path):
     # List of the strings that is used to add correct label for each box.
-    PATH_TO_LABELS = '../models/research/object_detection/data/mscoco_label_map.pbtxt'
+    PATH_TO_LABELS = 'models/research/object_detection/data/mscoco_label_map.pbtxt'
     category_index = label_map_util.create_category_index_from_labelmap(
         PATH_TO_LABELS, use_display_name=True)
 

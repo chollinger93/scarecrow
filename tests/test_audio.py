@@ -1,14 +1,17 @@
-import sys
-sys.path.append('..')
-from audio.player import *
 import pytest
+from plugins.audio import AudioPlugin
+import configparser
 
 def test_play_sound():
+    # Read config
+    conf = configparser.ConfigParser()
+    conf.read('tests/resources/plugins.d/audio.ini')
+    a = AudioPlugin(conf)
     print('Playing sound')
-    play_sound('./resources/warning.mp3', streamer='pygame')
+    a.play_sound('tests/resources/warning.mp3', streamer='pygame')
 
     with pytest.raises(NotImplementedError):
-        play_sound('./resources/warning.mp3', streamer='invalid')
+        a.play_sound('tests/resources/warning.mp3', streamer='invalid')
 
     with pytest.raises(Exception):
-        play_sound('./resources/nofilehere.mp4', streamer='pygame')
+        a.play_sound('tests/resources/nofilehere.mp4', streamer='pygame')

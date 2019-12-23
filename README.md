@@ -57,13 +57,13 @@ ModelUrl=ssd_mobilenet_v3_large_coco_2019_08_14
 
 ### On the raspberry
 ```
-python3 $PROJECT_LOCATION/client/sender.py --input 0 # for picam
-python3 $PROJECT_LOCATION/client/sender.py --input '/path/to/video' # for local video
+python3 -m client.sender --input 0 # for picam
+python3 -m client.sender --input '/path/to/video' # for local video
 ```
 
 ### On the server
 ```
-python3 $PROJECT_LOCATION/server/receiver.py
+python3 -m server.receiver
 ```
 
 ## Plugins
