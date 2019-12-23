@@ -2,14 +2,15 @@
 from vidgear.gears import VideoGear
 from vidgear.gears import NetGear
 
-import sys
-sys.path.append('..')
 from utilities.utils import *
 from plugin_base.utils import *
 
 import argparse
 import configparser
 import time 
+
+from utilities.utils import get_logger
+logger = get_logger()
 
 def run_camera(input_str, address, port, protocol, fps=25):
     """Runs the camera, sends messages
@@ -37,7 +38,7 @@ def run_camera(input_str, address, port, protocol, fps=25):
             frame = stream.read()
             # check if frame is None
             if frame is None:
-                print('No frame available')
+                logger.error('No frame available')
                 break
 
             # send frame to server
@@ -54,15 +55,24 @@ def run_camera(input_str, address, port, protocol, fps=25):
 if __name__ == "__main__":
     # Args
     parser = argparse.ArgumentParser(description='Runs local image detection')
-    parser.add_argument('--input', '--i', dest='in_file', type=str, required=True, default=0,
+    parser.add_argument('--input', '-i', dest='in_file', type=str, required=True, default=0,
                     help='Input file (0 for webcam)')
+    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=False, 
+                    help='Path to config dir')                                    
     args = parser.parse_args()
     # Conf
     conf = configparser.ConfigParser()
-    conf.read('../conf/config.ini')
+    conf_path = args.conf_path
+    if conf_path is None:
+        conf_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../conf/')
+        conf_path_core = '{}{}'.format(conf_path, 'config.ini')
+        logger.warning('No conf path, using {}'.format(conf_path_core))
+        conf.read(conf_path_core)
+    else:
+        conf.read('{}/config.ini'.format(conf_path))
 
     # Plugin ZMQ threads
-    start_receiver_plugins(load_plugins(conf['Plugins']['Enabled'].split(',')))
+    start_receiver_plugins(load_plugins(conf['Plugins']['Enabled'].split(','), conf_path=conf_path+'plugins.d'))
 
-    print('Starting camera stream')
+    logger.info('Starting camera stream')
     run_camera(args.in_file, conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['ZmqServer']['Protocol'], int(conf['Video']['FPS']))

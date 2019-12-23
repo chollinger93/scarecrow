@@ -57,13 +57,13 @@ ModelUrl=ssd_mobilenet_v3_large_coco_2019_08_14
 
 ### On the raspberry
 ```
-python3 $PROJECT_LOCATION/client/sender.py --input 0 # for picam
-python3 $PROJECT_LOCATION/client/sender.py --input '/path/to/video' # for local video
+python3 -m client.sender --input 0 # for picam
+python3 -m client.sender --input '/path/to/video' # for local video
 ```
 
 ### On the server
 ```
-python3 $PROJECT_LOCATION/server/receiver.py
+python3 -m server.receiver
 ```
 
 ## Plugins
@@ -80,7 +80,11 @@ Currently, the following plugins are avaibale:
 
 | Plugin | Description                                 | Requirements                                 | Configuration              | Base  |
 |--------|---------------------------------------------|----------------------------------------------|----------------------------|-------|
-| audio  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
+| `audio`  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
+| `store_video`  | Stores video files on the server, with a defined buffer or length | `Path` and `Encoding` settings | `conf/plugins.d/store_video.ini` | `ZServerMQ` |
+
+## How to contribute
+This project is in an **early state of development**. Therefore,  there are several open items that need to be covered. Please see [TODO](TODO.md) for details. 
 
 ## License
 This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details.

@@ -13,10 +13,9 @@ import tarfile
 import six.moves.urllib as urllib
 import os
 import numpy as np
-from audio import player
 import time
-import sys
-sys.path.append('../models/research/object_detection')
+from utilities.utils import get_logger
+logger = get_logger()
 
 
 def load_model(model_name):
@@ -36,7 +35,7 @@ def load_model(model_name):
         untar=True)
 
     model_dir = pathlib.Path(model_dir)/"saved_model"
-    print('Saved to {}'.format(model_dir))
+    logger.info('Saved to {}'.format(model_dir))
 
     model = tf.saved_model.load(str(model_dir))
     model = model.signatures['serving_default']
@@ -103,12 +102,12 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
         min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
     
     Returns:
-        (bool, int, float): Tuple with detection threshold, iterator, confidence
+        (bool, int, float, np_aray): Tuple with detection threshold, iterator, confidence, image with labels
     """
     # Actual detection.
     output_dict = run_inference_for_single_image(model, image_np)
     # Visualization of the results of a detection.
-    vis_util.visualize_boxes_and_labels_on_image_array(
+    np_det_img = vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
         output_dict['detection_boxes'],
         output_dict['detection_classes'],
@@ -121,23 +120,23 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
     cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
     # print the most likely
     if 'detection_scores' not in output_dict or len(category_index) < 1 or len(output_dict['detection_scores']) <= 0:
-        return (False, i, confidence)
+        return (False, i, confidence, np_det_img)
     max_label = category_index[1]
     max_score = output_dict['detection_scores'][0]  # ['name']
     if max_label['name'] == 'person':
         i += 1
         confidence += max_score
         avg_confidence = confidence/i
-    print('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
+    logger.debug('Count: {}, avg_confidence: {}'.format(i, avg_confidence))
     if i >= min_detections and avg_confidence >= min_confidence:
-        print('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(
+        logger.debug('HUMAN DETECTED! DEPLOY BORK BORK NOM NOM! {} {}'.format(
             i, avg_confidence))
         i = 0
         confidence = 0
         avg_confidence = 0
-        return (True, i, confidence)
+        return (True, i, confidence, np_det_img)
     else:
-        return (False, i, confidence)
+        return (False, i, confidence, np_det_img)
 
 
 def run_inference(model, cap, category_index, min_detections=10, min_confidence=0.7, fps=25):
@@ -154,25 +153,25 @@ def run_inference(model, cap, category_index, min_detections=10, min_confidence=
     confidence = 0
     i = 0
     # FPS limiter - only for video streams
-    print('Changing framerate from {} to {}'.format(cap.get(cv2.CAP_PROP_FPS), fps))
+    logger.debug('Changing framerate from {} to {}'.format(cap.get(cv2.CAP_PROP_FPS), fps))
     #cap.set(cv2.CAP_PROP_FPS, fps)
     while(cap.isOpened()):
         ret, image_np = cap.read()
-        print('Ret: {}'.format(ret))
+        logger.debug('Ret: {}'.format(ret))
         
         if image_np is None:
-            print('Image is none')
+            logger.error('Image is none')
             break
 
         # FPS limit
         cv2.waitKey(int( (1 / int(fps)) * 1000))
 
         # Actual detection.
-        res, i, confidence = detect(model, category_index, image_np,
+        res, i, confidence, np_det_img = detect(model, category_index, image_np,
                                     i, confidence,
                                     min_detections, min_confidence)
         if res:
-            print('Detected')
+            logger.debug('Detected')
             yield True
 
         # check for 'q' key-press

@@ -1,3 +1,6 @@
+import os 
+import logging
+import logging.config
 
 def get_local_ip():
     """**UNUSED**
@@ -16,3 +19,11 @@ def get_local_ip():
     print(s.getsockname()[0])
     s.close()
     return s.getsockname()[0]
+
+
+def get_logger():
+    file_dir = os.path.split(os.path.realpath(__file__))[0]
+    log_conf = os.path.join(file_dir, '../conf/logger.ini')
+    print(log_conf)
+    logging.config.fileConfig(log_conf, disable_existing_loggers=False)
+    return logging.getLogger()
