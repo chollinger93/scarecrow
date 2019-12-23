@@ -80,7 +80,11 @@ Currently, the following plugins are avaibale:
 
 | Plugin | Description                                 | Requirements                                 | Configuration              | Base  |
 |--------|---------------------------------------------|----------------------------------------------|----------------------------|-------|
-| audio  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
+| `audio`  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
+| `store_video`  | Stores video files on the server, with a defined buffer or length | `Path` and `Encoding` settings | `conf/plugins.d/store_video.ini` | `ZServerMQ` |
+
+## How to contribute
+This project is in an **early state of development**. Therefore,  there are several open items that need to be covered. Please see [TODO](TODO.md) for details. 
 
 ## License
 This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details.

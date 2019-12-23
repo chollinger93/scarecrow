@@ -12,3 +12,4 @@ playsound
 pytest
 pytest-cov
 pygobject
+colorlog

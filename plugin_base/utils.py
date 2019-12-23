@@ -1,5 +1,3 @@
-import sys
-sys.path.append('..')
 import time
 import zmq
 import multiprocessing as mp
@@ -7,6 +5,9 @@ import configparser
 from plugins.audio import AudioPlugin
 from plugins.store_video import StoreVideoPlugin
 import inspect
+
+from utilities.utils import get_logger
+logger = get_logger()
 
 # TODO: this should be a dynamic loader
 __allowed_plugins__ = {
@@ -33,6 +34,7 @@ def load_plugins(plugins, conf_path='../conf/plugins.d'):
     for plugin in plugins:
         # Read config
         conf = configparser.ConfigParser()
+        logger.debug('Reading plugin config {}/{}.ini'.format(conf_path, plugin))
         conf.read('{}/{}.ini'.format(conf_path, plugin))
         # Check enabled
         if plugin not in __allowed_plugins__:
@@ -67,7 +69,7 @@ def start_receiver_plugins(loaded_plugins):
             p.start()
             procs.append(p)
     else:
-        print('No ZmqBasePlugins loaded')
+        logger.warning('No ZmqBasePlugins loaded')
     return procs
 
 def send_messages(loaded_plugins):
@@ -80,7 +82,7 @@ def send_messages(loaded_plugins):
         for se in loaded_plugins['ZmqBasePlugin']:
             se.start_sender()
     else:
-        print('No ZmqBasePlugins loaded')
+        logger.warning('No ZmqBasePlugins loaded')
 
 def send_async_messages(loaded_plugins):
     """Starts a separate thread to send all messages
@@ -95,18 +97,18 @@ def send_async_messages(loaded_plugins):
             p.daemon = True
             p.start()
     else:
-        print('No ZmqBasePlugins loaded')
+        logger.warning('No ZmqBasePlugins loaded')
 
 def run_image_detector_plugins_before(loaded_plugins, *args, **kwargs):
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
             plugin.run_before(*args, **kwargs)
     else:
-        print('No ImageDetectorBasePlugins loaded')
+        logger.warning('No ImageDetectorBasePlugins loaded')
 
 def run_image_detector_plugins_after(loaded_plugins, *args, **kwargs):
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
             plugin.run_after(*args, **kwargs)
     else:
-        print('No ImageDetectorBasePlugins loaded')
+        logger.warning('No ImageDetectorBasePlugins loaded')

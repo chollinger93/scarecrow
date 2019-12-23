@@ -1,5 +1,7 @@
 import zmq
 
+from utilities.utils import get_logger
+logger = get_logger()
 
 class BasePlugin:
     """Base plugin class
@@ -7,7 +9,7 @@ class BasePlugin:
 
     def __init__(self, configuration):
         self.configuration = configuration
-        print('Loaded plugin {}'.format(self.__class__.__name__))
+        logger.debug('Loaded plugin {}'.format(self.__class__.__name__))
 
 
 class ImageDetectorBasePlugin(BasePlugin):
@@ -19,12 +21,12 @@ class ImageDetectorBasePlugin(BasePlugin):
         BasePlugin.__init__(self, configuration)
 
     def run_before(self, *args, **kwargs):
-        print('run_before is not implemented in {}'.format(
+        logger.debug('run_before is not implemented in {}'.format(
             self.__class__.__name__))
         pass
 
     def run_after(self, *args, **kwargs):
-        print('run_after is not implemented in {}'.format(
+        logger.debug('run_after is not implemented in {}'.format(
             self.__class__.__name__))
         pass
 
@@ -47,7 +49,7 @@ class ZmqBasePlugin(BasePlugin):
     def on_receive(self, *args, **kwargs):
         """Called on receving a message
         """
-        print('on_receive is not implemented in {}'.format(
+        logger.debug('on_receive is not implemented in {}'.format(
             self.__class__.__name__))
         pass
 
@@ -57,24 +59,24 @@ class ZmqBasePlugin(BasePlugin):
         Args:
             socket (socket): `ZMQ` socket
         """
-        print('send_ack is not implemented in {}'.format(self.__class__.__name__))
+        logger.debug('send_ack is not implemented in {}'.format(self.__class__.__name__))
         #  Send acknowlede
         socket.send(b'Ack')
 
     def process(self, *args, **kwargs):
         """Processes the message. Called after `on_receive`
         """
-        print('process is not implemented in {}'.format(self.__class__.__name__))
+        logger.debug('process is not implemented in {}'.format(self.__class__.__name__))
         pass
 
     def start_receiver(self, *args, **kwargs):
         """Starts the main reciver loop
         """
-        print('Starting receiver thread for ZMQ in {}...'.format(
+        logger.debug('Starting receiver thread for ZMQ in {}...'.format(
             self.__class__.__name__))
         context = zmq.Context()
         socket = context.socket(zmq.REP)
-        print('Binding to {}'.format(self.send_server))
+        logger.debug('Binding to {}'.format(self.send_server))
         socket.bind('tcp://*:{}'.format(self.send_port))
         while True:
             #  Wait for next request from client
@@ -98,9 +100,9 @@ class ZmqBasePlugin(BasePlugin):
         Args:
             socket (socket): `ZMQ` socket
         """
-        print('send is not implemented in {}'.format(self.__class__.__name__))
+        logger.debug('send is not implemented in {}'.format(self.__class__.__name__))
         msg = 'no_implemented'
-        print('Sending message {} to server {}:{}'.format(
+        logger.debug('Sending message {} to server {}:{}'.format(
             msg, self.recv_server, self.recv_port))
         socket.send_string(msg)
 
@@ -110,8 +112,8 @@ class ZmqBasePlugin(BasePlugin):
         Args:
             socket (socket): `ZMQ` socket
         """
-        print('on_ack is not implemented in {}'.format(self.__class__.__name__))
+        logger.debug('on_ack is not implemented in {}'.format(self.__class__.__name__))
         #  Send acknowlede
         #  Get the reply.
         response = socket.recv()
-        print('Received response: {}'.format(response))
+        logger.debug('Received response: {}'.format(response))

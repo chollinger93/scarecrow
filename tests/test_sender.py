@@ -1,11 +1,10 @@
-
-import sys
-sys.path.append('..')
-import time
-import multiprocessing as mp
-from vidgear.gears import NetGear
-import pytest
 from client.sender import run_camera
+import pytest
+from vidgear.gears import NetGear
+import multiprocessing as mp
+import time
+from utilities.utils import get_logger
+logger = get_logger()
 
 
 @pytest.fixture
@@ -31,20 +30,19 @@ def zmq_receiver(zmq_args):
 
 def test_run_camera(zmq_args, zmq_receiver):
     p = mp.Process(target=run_camera, args=('./resources/walking_test_5s.mp4',
-                                              zmq_args['ip'],
-                                              zmq_args['port'],
-                                              zmq_args['protocol'],
-                                              zmq_args['fps'], ))
+                                            zmq_args['ip'],
+                                            zmq_args['port'],
+                                            zmq_args['protocol'],
+                                            zmq_args['fps'], ))
     p.start()
     p.Daemon = True
     # Receive
-    print('Starting receiver')
+    logger.info('Starting receiver')
     for i in range(5):
         frame = zmq_receiver.recv()
         assert frame is not None
-        print('Image received')
+        logger.info('Image received')
         time.sleep(1)
-    print('Shutdown')
+    logger.info('Shutdown')
     p.terminate()
     p.join()
-

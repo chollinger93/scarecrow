@@ -1,10 +1,11 @@
-import sys
-sys.path.append('..')
 from PIL import Image
 import cv2
 import numpy as np
 from plugin_base.base import *
 import datetime
+
+from utilities.utils import get_logger
+logger = get_logger()
 
 class StoreVideoPlugin(ImageDetectorBasePlugin):
     def __init__(self, configuration):
@@ -18,22 +19,21 @@ class StoreVideoPlugin(ImageDetectorBasePlugin):
         except Exception:
             target_len = int(configuration['Video']['TargetLengthSeconds'])
             self.buffer_size = target_len*self.fps
-            print('Using TargetLengthSeconds, setting to {}'.format(self.buffer_size))
+            logger.warning('Using TargetLengthSeconds, setting to {}'.format(self.buffer_size))
         ImageDetectorBasePlugin.__init__(self, configuration)
 
     def run_after(self, res, ix, confidence, np_det_img):
         # TODO: SIGTERM handler
         # TODO: detection labels as *args
-        print(res, ix, confidence, )
-        print('StoreVideoPlugin run_after ix {} / buf {}'.format(ix, len(self.buffer)))
+        logger.debug('StoreVideoPlugin run_after ix {} / buf {}'.format(ix, len(self.buffer)))
         if np_det_img is not None:
             img = np_det_img.astype(np.uint8)
             self.buffer.append(img)
         else:
-            print('Store video frame is null?')
+            logger.warning('Store video frame is null?')
 
         if len(self.buffer) > self.buffer_size:
-            print('Flushing video')
+            logger.info('Flushing video')
             dt = datetime.datetime.now().isoformat()
             fourcc = cv2.VideoWriter_fourcc(*self.codec) #mp4v
             video = cv2.VideoWriter(

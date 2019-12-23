@@ -2,7 +2,6 @@
 
 def play_sound(input, streamer='pygame'):
     print('Playing sound {}'.format(input))
-    #
     if streamer == 'pygame':
         from pygame import mixer
         mixer.pre_init(44100, -16, 1, 512)
