@@ -15,7 +15,7 @@ import os
 from utilities.utils import get_logger
 logger = get_logger()
 
-def receive(category_index, model, address, port, protocol, min_detections=10, min_confidence=0.7, server_plugins={}):
+def receive(category_index, model, address, port, protocol, pattern=0, min_detections=10, min_confidence=0.7, server_plugins={}):
     """Main receiver loop for network detection
     
     Args:
@@ -24,6 +24,7 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
         address (str): URL of `OpenCV` sender / Pi
         port (int): Port of `OpenCV` sender / Pi
         protocol (str): Protocol of of `OpenCV` sender / Pi
+        pattern (int, optional): ZMQ Pattern. 0=`zmq.PAIR`, 1=`zmq.REQ/zmq.REP`; 2=`zmq.PUB,zmq.SUB`. Defaults to 0.
         min_detections (int, optional): Minimum detections required to yield a positive result. Defaults to 10.
         min_confidence (float, optional): Minimum average confidence required to yield a positive result. Defaults to 0.7.
     
@@ -31,13 +32,13 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
         bool: True for a successful detection
     """
     client = NetGear(address=address, port=str(port), protocol=protocol,
-                     pattern=0, receive_mode=True, logging=True)  # Define netgear client at Server IP address.
+                     pattern=pattern, receive_mode=True, logging=True)  # Define netgear client at Server IP address.
 
     # For detection thresholds
     confidence = 0
     i = 0
     # infinite loop
-    while True:  # TODO: FPS limit
+    while True:  
         # receive frames from network
         frame = client.recv()
         logger.debug('Image received')
@@ -72,7 +73,7 @@ def receive(category_index, model, address, port, protocol, min_detections=10, m
     client.close()
 
 
-def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_name, use_sender_thread, plugins, conf_path):
+def main(zmq_ip, zmq_port, zmq_protocol, pattern, min_detections, min_confidence, model_name, use_sender_thread, plugins, conf_path):
     # List of the strings that is used to add correct label for each box.
     PATH_TO_LABELS = 'models/research/object_detection/data/mscoco_label_map.pbtxt'
     category_index = label_map_util.create_category_index_from_labelmap(
@@ -82,7 +83,7 @@ def main(zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, model_n
 
     # Client Plugins
     loaded_plugins = load_plugins(plugins=plugins, conf_path=conf_path+'plugins.d')
-    for res in receive(category_index, detection_model, zmq_ip, zmq_port, zmq_protocol, min_detections, min_confidence, loaded_plugins):
+    for res in receive(category_index, detection_model, zmq_ip, zmq_port, zmq_protocol, pattern, min_detections, min_confidence, loaded_plugins):
         logger.debug('Received signal')
         if use_sender_thread:
             send_async_messages(loaded_plugins)
@@ -111,9 +112,10 @@ if __name__ == "__main__":
         conf_path = '../conf'
         conf.read('{}/config.ini'.format(conf_path))
 
-    for res in main(conf['ZmqServer']['IP'], 
-        conf['ZmqServer']['Port'],
-        conf['ZmqServer']['Protocol'],
+    for res in main(conf['ZmqCamera']['IP'], 
+        conf['ZmqCamera']['Port'],
+        conf['ZmqCamera']['Protocol'],
+        int(conf['ZmqCamera']['Pattern']),
         float(conf['Detection']['min_detections']), 
         float(conf['Detection']['min_confidence']),
         model_name=conf['Tensorflow']['ModelUrl'],

@@ -24,6 +24,5 @@ def get_local_ip():
 def get_logger():
     file_dir = os.path.split(os.path.realpath(__file__))[0]
     log_conf = os.path.join(file_dir, '../conf/logger.ini')
-    print(log_conf)
     logging.config.fileConfig(log_conf, disable_existing_loggers=False)
     return logging.getLogger()
