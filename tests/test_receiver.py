@@ -1,4 +1,5 @@
 import time
+import configparser
 import multiprocessing as mp
 from vidgear.gears import NetGear
 import pytest
@@ -31,15 +32,12 @@ def zmq_sender(zmq_args):
     stream.stop()
 
 
-q = mp.Queue()
-
-
-def __main_proc_wrap__(ip, port, protocol, min_detections, min_confidence, model_name, plugins, ret_list):
+def __main_proc_wrap__(conf, detection_threshold, fps, ret_list):
     __res__ = {
         'res': 0,
         'det': 0
     }
-    for res in main(ip, port, protocol, min_detections, min_confidence, model_name, False, plugins, conf_path='tests/conf/plugins.d'):
+    for res in main(conf, conf_path='tests/resources/'):
         logger.info('Got res {}'.format(res))
         __res__['res'] += 1
         if res:
@@ -48,16 +46,15 @@ def __main_proc_wrap__(ip, port, protocol, min_detections, min_confidence, model
 
 
 def test_run_camera(zmq_args, zmq_sender):
+    # Conf
+    conf = configparser.ConfigParser()
+    conf.read('tests/resources/config.ini')
     # Receive
     manager = mp.Manager()
     ret_list = manager.list()
-    p = mp.Process(target=__main_proc_wrap__, args=(zmq_args['ip'],
-                                                    zmq_args['port'],
-                                                    zmq_args['protocol'],
-                                                    1,  # min_detections
-                                                    0.3,  # min_confidence
-                                                    'ssdlite_mobilenet_v2_coco_2018_05_09',  # model,
-                                                    [],  # plugins
+    p = mp.Process(target=__main_proc_wrap__, args=(conf,
+                                                    -1, # detection_threshold
+                                                    20, # fps
                                                     ret_list,  # ret_list
                                                     ))
     p.start()

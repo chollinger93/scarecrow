@@ -11,3 +11,5 @@
 
 ## Features
 * ZMQ 1:many relation
+* Dynamic config reload 
+* Threshold for detection

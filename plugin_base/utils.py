@@ -36,6 +36,9 @@ def load_plugins(plugins, conf_path='../conf/plugins.d'):
         conf = configparser.ConfigParser()
         logger.debug('Reading plugin config {}/{}.ini'.format(conf_path, plugin))
         conf.read('{}/{}.ini'.format(conf_path, plugin))
+        # Check exists
+        if plugin is None or plugin == '':
+            continue
         # Check enabled
         if plugin not in __allowed_plugins__:
             raise NotImplementedError
