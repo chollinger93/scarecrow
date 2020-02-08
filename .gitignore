@@ -8,12 +8,11 @@ blog_snapshots/*
 sbin/debian-scripts/
 vidgear/
 testbench/
-
+notebooks/*test*.ipynb
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*setup*.py
 # C extensions
 *.so
 

@@ -8,6 +8,8 @@ from utilities.utils import get_logger
 logger = get_logger()
 
 class StoreVideoPlugin(ImageDetectorBasePlugin):
+    name = 'store_video'
+
     def __init__(self, configuration):
         self.buffer = []
         self.fps = float(configuration['Video']['FPS'])
@@ -33,11 +35,12 @@ class StoreVideoPlugin(ImageDetectorBasePlugin):
             logger.warning('Store video frame is null?')
 
         if len(self.buffer) > self.buffer_size:
-            logger.info('Flushing video')
             dt = datetime.datetime.now().isoformat()
+            vid_path = '{}/{}_{}'.format(self.video_path, dt, self.name)
+            logger.info('Flushing video to {}'.format(vid_path))
             fourcc = cv2.VideoWriter_fourcc(*self.codec) #mp4v
             video = cv2.VideoWriter(
-                '{}/{}_{}'.format(self.video_path, dt, self.name), 
+                vid_path, 
                 fourcc, 
                 self.fps, 
                 (self.buffer[0].shape[1], self.buffer[0].shape[0]),
@@ -50,4 +53,6 @@ class StoreVideoPlugin(ImageDetectorBasePlugin):
             self.buffer = []
             # Save a separate key frame 
             img = Image.fromarray(np_det_img, 'RGB')
-            img.save('{}/{}_{}_thumb.jpg'.format(self.video_path, dt, ix))
+            thumb_path = '{}/{}_{}_thumb.jpg'.format(self.video_path, dt, ix)
+            logger.info('Flushing thumbnail to {}'.format(thumb_path))
+            img.save(thumb_path)
