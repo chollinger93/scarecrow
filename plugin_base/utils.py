@@ -5,15 +5,9 @@ import configparser
 from plugins.audio import AudioPlugin
 from plugins.store_video import StoreVideoPlugin
 import inspect
-
+from plugin_base.interceptor import PluginInterceptor
 from utilities.utils import get_logger
 logger = get_logger()
-
-# TODO: this should be a dynamic loader
-__allowed_plugins__ = {
-    'audio': AudioPlugin,
-    'store_video': StoreVideoPlugin
-}
 
 # Read config
 
@@ -30,6 +24,7 @@ def load_plugins(plugins, conf_path='../conf/plugins.d'):
         dict: loaded_plugins
     """
     # Load plugins
+    pi = PluginInterceptor()
     loaded_plugins = {}
     for plugin in plugins:
         # Read config
@@ -40,11 +35,11 @@ def load_plugins(plugins, conf_path='../conf/plugins.d'):
         if plugin is None or plugin == '':
             continue
         # Check enabled
-        if plugin not in __allowed_plugins__:
+        if plugin not in pi.allowed_plugins:
             raise NotImplementedError
         else:
             # TODO: enable port conflict scan
-            p = __allowed_plugins__[plugin]
+            p = pi.allowed_plugins[plugin]
             o = p(conf)
             base = inspect.getmro(p)[1]
             if base.__name__ not in loaded_plugins:

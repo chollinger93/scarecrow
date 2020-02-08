@@ -6,6 +6,7 @@ logger = get_logger()
 class BasePlugin:
     """Base plugin class
     """
+    name = None
 
     def __init__(self, configuration):
         self.configuration = configuration

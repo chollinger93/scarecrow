@@ -63,6 +63,9 @@ def test_run_image_detector_plugins_after_loop(plugs):
     conf.read('tests/resources/plugins.d/{}.ini'.format('store_video'))
     out_path = conf['Video']['Path']
 
+    if not os.path.exists(out_path):
+        os.mkdir(out_path)
+
     # Remove old files
     rm_files_in_tree(out_path)
 

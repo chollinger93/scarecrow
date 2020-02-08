@@ -5,6 +5,8 @@ from utilities.utils import get_logger
 logger = get_logger()
 
 class AudioPlugin(ZmqBasePlugin):
+    name = 'audio'
+    
     def __init__(self, configuration):
         self.audio_path = configuration['Audio']['Path']
         self.streamer = configuration['Audio']['Streamer']
