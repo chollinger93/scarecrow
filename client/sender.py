@@ -37,6 +37,9 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25):
 
     # infinite loop until [Ctrl+C] is pressed
     while True:
+        # Sleep
+        time.sleep(0.02)
+
         try:
             frame = stream.read()
             # check if frame is None

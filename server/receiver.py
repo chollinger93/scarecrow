@@ -55,6 +55,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
     # infinite loop
     while True:
         # receive frames from network
+        # TODO: time sleep comes from my fork of vidgear - might break lib
         frame = client.recv()
         logger.debug('Image received')
         image_np = np.copy(frame)

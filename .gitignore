@@ -15,7 +15,7 @@ __pycache__/
 *$py.class
 # C extensions
 *.so
-
+*.swp*
 # Distribution / packaging
 .Python
 build/
