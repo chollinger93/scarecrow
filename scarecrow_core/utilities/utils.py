@@ -21,8 +21,16 @@ def get_local_ip():
     return s.getsockname()[0]
 
 
-def get_logger():
+def get_logger(conf_path='../../conf/logger.ini'):
+    """Gets the standard logger
+    
+    Args:
+        conf_path (str, optional): Config path. Defaults to '../conf/logger.ini'.
+    
+    Returns:
+        logger: Logger
+    """
     file_dir = os.path.split(os.path.realpath(__file__))[0]
-    log_conf = os.path.join(file_dir, '../conf/logger.ini')
+    log_conf = os.path.join(file_dir, conf_path)
     logging.config.fileConfig(log_conf, disable_existing_loggers=False)
     return logging.getLogger()

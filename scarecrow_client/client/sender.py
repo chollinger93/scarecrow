@@ -2,14 +2,14 @@
 from vidgear.gears import VideoGear
 from vidgear.gears import NetGear
 
-from utilities.utils import *
-from plugin_base.utils import *
+from scarecrow_core.utilities.utils import *
+from scarecrow_core.plugin_base.utils import *
 
 import argparse
 import configparser
 import time
 
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 

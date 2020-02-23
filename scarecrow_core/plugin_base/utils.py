@@ -2,11 +2,11 @@ import time
 import zmq
 import multiprocessing as mp
 import configparser
-from plugins.audio import AudioPlugin
-from plugins.store_video import StoreVideoPlugin
+from scarecrow_core.plugins.audio import AudioPlugin
+from scarecrow_core.plugins.store_video import StoreVideoPlugin
 import inspect
-from plugin_base.interceptor import PluginInterceptor
-from utilities.utils import get_logger
+from .interceptor import PluginInterceptor
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 # Read config

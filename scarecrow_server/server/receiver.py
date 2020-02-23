@@ -5,14 +5,14 @@ from object_detection.utils import ops as utils_ops
 import multiprocessing
 import cv2
 from vidgear.gears import NetGear
-from tensor_detectors.detector import run_inference_for_single_image, load_model, detect
-from network.messages import Messages
-from plugin_base.utils import *
+from scarecrow_core.tensor_detectors.detector import run_inference_for_single_image, load_model, detect
+from scarecrow_core.network.messages import Messages
+from scarecrow_core.plugin_base.utils import *
 import configparser
 import argparse
 import os
 
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 
@@ -110,7 +110,7 @@ def main(conf, conf_path, **kwargs):
         bool: Detection successful
     """
     # List of the strings that is used to add correct label for each box.
-    PATH_TO_LABELS = 'models/research/object_detection/data/mscoco_label_map.pbtxt'
+    PATH_TO_LABELS = '../models/research/object_detection/data/mscoco_label_map.pbtxt'
     category_index = label_map_util.create_category_index_from_labelmap(
         PATH_TO_LABELS, use_display_name=True)
 
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         logger.warning('No conf path, using {}'.format(conf_path_core))
         conf.read(conf_path_core)
     else:
-        conf_path = '../conf'
+        #conf_path = '../conf'
         conf.read('{}/config.ini'.format(conf_path))
 
     # Main

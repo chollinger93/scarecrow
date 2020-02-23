@@ -14,7 +14,7 @@ import six.moves.urllib as urllib
 import os
 import numpy as np
 import time
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 

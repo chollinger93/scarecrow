@@ -3,7 +3,7 @@ import pytest
 from vidgear.gears import NetGear
 import multiprocessing as mp
 import time
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 
@@ -29,7 +29,7 @@ def zmq_receiver(zmq_args):
 
 
 def test_run_camera(zmq_args, zmq_receiver):
-    p = mp.Process(target=run_camera, args=('tests/resources/walking_test_5s.mp4',
+    p = mp.Process(target=run_camera, args=('../resources/tests/walking_test_5s.mp4',
                                             zmq_args['ip'],
                                             zmq_args['port'],
                                             zmq_args['protocol'],

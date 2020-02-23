@@ -1,7 +1,7 @@
-from network.messages import Messages
-from plugin_base.base import *
+from scarecrow_core.network.messages import Messages
+from scarecrow_core.plugin_base.base import *
 
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 class AudioPlugin(ZmqBasePlugin):

@@ -1,5 +1,5 @@
-from plugin_base.base import BasePlugin
-from utilities.utils import get_logger
+from .base import BasePlugin
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 class PluginInterceptor:

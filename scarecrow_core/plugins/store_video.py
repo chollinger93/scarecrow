@@ -1,10 +1,10 @@
 from PIL import Image
 import cv2
 import numpy as np
-from plugin_base.base import *
+from scarecrow_core.plugin_base.base import *
 import datetime
 
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 class StoreVideoPlugin(ImageDetectorBasePlugin):

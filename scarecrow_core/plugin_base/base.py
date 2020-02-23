@@ -1,6 +1,6 @@
 import zmq
 
-from utilities.utils import get_logger
+from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 class BasePlugin:
