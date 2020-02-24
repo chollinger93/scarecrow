@@ -57,31 +57,32 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25):
     # safely close video stream
     stream.stop()
 
-
-if __name__ == "__main__":
+def start():
+    """Setup.py entry point
+    """
     # Args
     parser = argparse.ArgumentParser(description='Runs local image detection')
     parser.add_argument('--input', '-i', dest='in_file', type=str, required=True, default=0,
                         help='Input file (0 for webcam)')
-    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=False,
+    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=True,
                         help='Path to config dir')
     args = parser.parse_args()
     # Conf
     conf = configparser.ConfigParser()
     conf_path = args.conf_path
-    if conf_path is None:
-        conf_path = os.path.join(os.path.abspath(
-            os.path.dirname(__file__)), '../conf/')
-        conf_path_core = '{}{}'.format(conf_path, 'config.ini')
-        logger.warning('No conf path, using {}'.format(conf_path_core))
-        conf.read(conf_path_core)
-    else:
-        conf.read('{}/config.ini'.format(conf_path))
+
+    # Read config
+    conf_path = os.path.abspath(conf_path)
+    logger.info('Reading config at {}'.format(conf_path))
+    conf.read('{}/config.ini'.format(conf_path))
 
     # Plugin ZMQ threads
     start_receiver_plugins(load_plugins(
-        conf['Plugins']['Enabled'].split(','), conf_path=conf_path+'plugins.d'))
+        conf['Plugins']['Enabled'].split(','), conf_path=conf_path+'/plugins.d'))
 
     logger.info('Starting camera stream')
     run_camera(args.in_file, conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['ZmqServer']['Protocol'],
                int(conf['ZmqServer']['Pattern']), int(conf['Video']['FPS']))
+
+if __name__ == "__main__":
+    start()

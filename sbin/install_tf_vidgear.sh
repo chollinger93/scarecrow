@@ -9,8 +9,12 @@ else
      echo "USAGE: ./install_tf_vidgear.sh [server/client]"
      exit 1
 fi 
-if [[ "${MODE}" == "client" ]] || [[ "${MODE}" == "server" ]]; then
+if [[ "${MODE}" == "client" ]]; then
     echo "Using ${MODE} mode"
+    MODE_DIR="scarecrow_client"
+elif [[ "${MODE}" == "server" ]]; then
+    echo "Using ${MODE} mode"
+    MODE_DIR="scarecrow_server"
 else
     echo "Please specify either 'server' or 'client'"
     exit 1
@@ -44,7 +48,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 logCol "Installing Python dependencies"
-pip3 install -r "../${MODE}/requirements.txt"
+pip3 install -r "../${MODE_DIR}/requirements.txt"
 if [[ $? -ne 0 ]]; then
     logErr "Pip Installation failed, please check the logs!"
     exit 1
@@ -66,11 +70,7 @@ else
         logWarn "Models exists already, not installing!"
     else 
         logCol "Installing Tensorflow Models..."
-        git clone https://github.com/otter-in-a-suit/models.git
-        cd models/research
-        protoc object_detection/protos/*.proto --python_out=.
-        python3 setup.py build 
-        python3 setup.py install 
+        source ./install_tensorflow_models.sh 
     fi
 fi 
 
@@ -79,9 +79,7 @@ if [ -d "./vidgears/" ]; then
     logWarn "Models exists already, not installing!"
 else 
     logCol "Installing vidgear"
-    git clone https://github.com/otter-in-a-suit/vidgear.git
-    cd vidgear
-    pip3 install .
+    source ./install_vidgear.sh 
 fi
 
 cd "${DIR}"

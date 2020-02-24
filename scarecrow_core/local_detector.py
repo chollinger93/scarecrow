@@ -1,8 +1,7 @@
 import sys
-sys.path.append('./models/research/object_detection')
-sys.path.append('./tensor_detectors')
-from network.messages import Messages
-from tensor_detectors.detector import load_model, label_map_util, run_inference
+sys.path.append('../models/research/object_detection')
+from scarecrow_core.network.messages import Messages
+from scarecrow_core.tensor_detectors.detector import load_model, label_map_util, run_inference
 import configparser
 import argparse
 import cv2

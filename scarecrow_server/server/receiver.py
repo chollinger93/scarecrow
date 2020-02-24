@@ -99,7 +99,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
 # use_sender_thread  # detection_threshold
 
 
-def main(conf, conf_path, **kwargs):
+def main(conf, conf_path, label_path, **kwargs):
     """Main function for receiver
     
     Args:
@@ -110,7 +110,7 @@ def main(conf, conf_path, **kwargs):
         bool: Detection successful
     """
     # List of the strings that is used to add correct label for each box.
-    PATH_TO_LABELS = '../models/research/object_detection/data/mscoco_label_map.pbtxt'
+    PATH_TO_LABELS = os.path.abspath(label_path)
     category_index = label_map_util.create_category_index_from_labelmap(
         PATH_TO_LABELS, use_display_name=True)
 
@@ -118,7 +118,7 @@ def main(conf, conf_path, **kwargs):
 
     # Client Plugins
     loaded_plugins = load_plugins(plugins=conf['Plugins']['Enabled'].split(
-        ','), conf_path=conf_path+'plugins.d')
+        ','), conf_path=conf_path+'/plugins.d')
 
     # Start loop
     for res in receive(category_index,
@@ -140,29 +140,27 @@ def main(conf, conf_path, **kwargs):
         yield res
 
 
-if __name__ == "__main__":
+def start():
+    """Setup.py entry point
+    """
     # Args
     parser = argparse.ArgumentParser(description='Runs local image detection')
-    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=False,
+    parser.add_argument('--config', '-c', dest='conf_path', type=str, required=True,
                         help='Path to config dir')
     args = parser.parse_args()
     # Conf
     conf = configparser.ConfigParser()
     conf_path = args.conf_path
 
-    if conf_path is None:
-        conf_path = os.path.join(os.path.abspath(
-            os.path.dirname(__file__)), '../conf/')
-        conf_path_core = '{}{}'.format(conf_path, 'config.ini')
-        logger.warning('No conf path, using {}'.format(conf_path_core))
-        conf.read(conf_path_core)
-    else:
-        #conf_path = '../conf'
-        conf.read('{}/config.ini'.format(conf_path))
-
+    # Read config
+    conf_path = os.path.abspath(conf_path)
+    logger.info('Reading config at {}'.format(conf_path))
+    conf.read('{}/config.ini'.format(conf_path))
+    
     # Main
-    for res in main(conf,
+    for res in main(conf=conf,
                     conf_path=conf_path,
+                    label_path=conf['Tensorflow']['LabelMapPath'], # '../models/research/object_detection/data/mscoco_label_map.pbtxt'
                     use_sender_thread=conf.getboolean(
                         'Plugins', 'UseSenderThread'),
                     detection_threshold=int(
@@ -170,3 +168,6 @@ if __name__ == "__main__":
                     fps=int(
                         conf['Video']['FPS'])):
         pass
+
+if __name__ == "__main__":
+    start()

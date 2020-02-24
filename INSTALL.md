@@ -1,6 +1,12 @@
 # Installation
 This needs to be done on both the client (i.e., the raspbery) and the server.
 
+# Setup
+```
+pip3 install . --upgrade
+```
+
+# Manual
 ## Helper
 A convienent installation helper is available as:
 ```
@@ -66,9 +72,9 @@ sudo apt install ffmpeg
 
 Install dependencies:
 ```
-pip3 install -r server/requirements.txt # server
+pip3 install -r scarecrow_server/requirements.txt # server
 # OR
-pip3 install -r client/requirements.txt # client
+pip3 install -r scarecrow_client/requirements.txt # client
 ```
 
 Use the [VidGear](https://github.com/abhiTronix/vidgear.git) development branch:
@@ -82,6 +88,6 @@ pip3 install .
 
 ## Unit tests
 ```
-cd ./tests # TODO: fix paths
+# In either `scarecrow_client` or `scarecrow_server` or `scarecrow_core`
 pytest -vv -s --cov-report html --cov=. --cov-config=.coveragerc tests
 ```

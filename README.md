@@ -22,17 +22,13 @@ This project requires:
 ![Pi](./docs/pi.jpg)
 
 ## Install
-
-A helper script is available:
-
 **Use a virtual environment**
+`scarecrow-cam` can be installed using pip:
 ```
-python3 -m venv env
-source env/bin/activate
-bash ./sbin/install_tf_vidgear.sh [server/client]
+pip3 install . --upgrade
 ```
 
-Please see [INSTALL.md](./INSTALL.md) for details.
+Please see [INSTALL.md](./INSTALL.md) for details and troubleshooting.
 
 ## Configuration and data
 
@@ -51,19 +47,20 @@ If you want to change the `model`, please check the [Model Zoo](https://github.c
 ```
 [Tensorflow]
 ModelUrl=ssd_mobilenet_v3_large_coco_2019_08_14
+LabelMapPath=./models/research/object_detection/data/mscoco_label_map.pbtxt
 ```
 
 ## Run
 
 ### On the raspberry
 ```
-python3 -m client.sender --input 0 # for picam
-python3 -m client.sender --input '/path/to/video' # for local video
+scarecrow_client --config ./conf --input 0 # for picam
+scarecrow_client --config ./conf --input ./resources/tests/walking_test_5s.mp4 # for local video 
 ```
 
 ### On the server
 ```
-python3 -m server.receiver
+scarecrow_server --config ./conf
 ```
 
 ## Plugins

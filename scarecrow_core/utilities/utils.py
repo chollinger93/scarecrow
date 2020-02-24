@@ -30,7 +30,15 @@ def get_logger(conf_path='../../conf/logger.ini'):
     Returns:
         logger: Logger
     """
-    file_dir = os.path.split(os.path.realpath(__file__))[0]
-    log_conf = os.path.join(file_dir, conf_path)
-    logging.config.fileConfig(log_conf, disable_existing_loggers=False)
-    return logging.getLogger()
+    try:
+        file_dir = os.path.split(os.path.realpath(__file__))[0]
+        log_conf = os.path.join(file_dir, conf_path)
+        logging.config.fileConfig(log_conf, disable_existing_loggers=False)
+        logger = logging.getLogger()
+    except Exception:
+        formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        logger = logging.getLogger()
+        logger.addHandler(handler)
+    return logger
