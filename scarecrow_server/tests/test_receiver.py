@@ -37,7 +37,7 @@ def __main_proc_wrap__(conf, detection_threshold, fps, ret_list):
         'res': 0,
         'det': 0
     }
-    for res in main(conf, conf_path='../resources/tests', detection_threshold=detection_threshold, fps=fps):
+    for res in main(conf, conf_path='../resources/tests', detection_threshold=detection_threshold, fps=fps, label_path=conf['Tensorflow']['LabelMapPath'],):
         logger.info('Got res {}'.format(res))
         __res__['res'] += 1
         if res:
