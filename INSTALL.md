@@ -1,8 +1,18 @@
 # Installation
-This needs to be done on both the client (i.e., the raspbery) and the server.
+This needs to be done on both the client (i.e., the raspberry) and the server.
+
+# Automatic Setup
+
+This is the preferred way to install `scarecrow`, but it might miss some platform-specific dependencies.
+```
+pip3 install . --upgrade
+```
+
+# Manual
+If for some reason, the `setup.py` does not work, the steps below show the manual installation route.
 
 ## Helper
-A convienent installation helper is available as:
+A convenient installation helper is available as:
 ```
 bash ./sbin/install_tf_vidgear.sh [server/client]
 ```
@@ -24,17 +34,23 @@ extra-index-url=https://www.piwheels.org/simple
 
 See: [https://www.piwheels.org/](https://www.piwheels.org/)
 
-Also see [./sbin/install_raspi.sh](./sbin/install_raspi.sh) for an example on how to set up a new Raspbery.
+Also see [./sbin/install_raspi.sh](./sbin/install_raspi.sh) for an example on how to set up a new Raspberry.
 
 ## General Instructions
 
-**Use a virtual environment**
+*Always use a virtual environment*
 ```
 python3 -m venv env
 source env/bin/activate
 ```
 
-Install Object Detection Models:
+The Object Detection Models are **a submodule of this repository and usually do not need to be cloned manually**.
+
+```
+git submodule update --init --recursive && git submodule update --remote
+```
+
+You can, however, pull them as such:
 ```
 # git clone https://github.com/tensorflow/models.git
 git clone https://github.com/otter-in-a-suit/models.git # Contains bugfix
@@ -44,6 +60,8 @@ python3 setup.py build
 python3 setup.py install 
 cd ../../
 ```
+
+The `models` directory should be referred to in your `config.ini`.
 
 The project supports multiple ways for playing audio. If you want to use `Gstreamer` and `playsound`:
 ```
@@ -66,22 +84,13 @@ sudo apt install ffmpeg
 
 Install dependencies:
 ```
-pip3 install -r server/requirements.txt # server
+pip3 install -r scarecrow_server/requirements.txt # server
 # OR
-pip3 install -r client/requirements.txt # client
-```
-
-Use the [VidGear](https://github.com/abhiTronix/vidgear.git) development branch:
-```
-cd ~/workspace
-git clone https://github.com/abhiTronix/vidgear.git
-cd vidgear
-git checkout development
-pip3 install .
+pip3 install -r scarecrow_client/requirements.txt # client
 ```
 
 ## Unit tests
 ```
-cd ./tests # TODO: fix paths
+# In either `scarecrow_client` or `scarecrow_server` or `scarecrow_core`
 pytest -vv -s --cov-report html --cov=. --cov-config=.coveragerc tests
 ```

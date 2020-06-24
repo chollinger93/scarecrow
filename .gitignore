@@ -1,21 +1,26 @@
 # Custom
-models/
+#models/
 ssd_inception*
-videos/*
-audio_files/*
+resources/videos/*.mp3
+resources/videos/*.mp4
+resources/audio_files/*.mp3
 .vscode/
 blog_snapshots/*
 sbin/debian-scripts/
 vidgear/
 testbench/
 notebooks/*test*.ipynb
+*tmp*
+conf/config.ini
+conf/plugins.d/*.ini
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 # C extensions
 *.so
-
+*.swp*
 # Distribution / packaging
 .Python
 build/

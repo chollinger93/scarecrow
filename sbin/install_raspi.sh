@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "This script is used for reference; do not run it manually"
+exit 1
+
 # Grab SD card
 sudo fdisk -l 
 
