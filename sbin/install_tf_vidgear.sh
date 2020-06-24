@@ -74,13 +74,14 @@ else
     fi
 fi 
 
-logCol "Checking for vidgear"
-if [ -d "./vidgears/" ]; then
-    logWarn "Models exists already, not installing!"
-else 
-    logCol "Installing vidgear"
-    source ./install_vidgear.sh 
-fi
+# Disabled
+#logCol "Checking for vidgear"
+#if [ -d "./vidgears/" ]; then
+#    logWarn "Models exists already, not installing!"
+#else 
+#    logCol "Installing vidgear"
+#    source ./install_vidgear.sh 
+#fi
 
 cd "${DIR}"
 
