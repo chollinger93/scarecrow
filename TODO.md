@@ -8,8 +8,8 @@
 * ~~Re-organize configs / relative paths~~
 * ~~Fix python path and module structure~~
 * Fix all paths
-* Simplify deployment
-* Simplify dependencies; avoid custom `vidgear`
+* ~~Simplify deployment~~
+* ~~Simplify dependencies; avoid custom `vidgear`~~
 
 ## Features
 * ZMQ 1:many relation

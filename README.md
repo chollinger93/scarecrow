@@ -3,7 +3,7 @@ A `Raspberry Pi` powered, distributed (edge) computing camera setups that runs a
 
 Based on the detection criteria, a **plugin model** allows to trigger downstream actions.
 
-*Based on my [blog](https://chollinger.com/blog/2019/12/tensorflow-on-edge-building-a-smar-security-camera-with-a-raspberry-pi/).*
+*Based on my [blog](https://chollinger.com/blog/2019/12/tensorflow-on-edge-or-building-a-smart-security-camera-with-a-raspberry-pi/).*
 
 ## Architecture
 ![Architecture](./docs/architecture.png)
@@ -22,7 +22,6 @@ This project requires:
 ![Pi](./docs/pi.jpg)
 
 ## Install
-**Use a virtual environment**
 `scarecrow-cam` can be installed using pip:
 ```
 pip3 install . --upgrade
@@ -32,7 +31,7 @@ Please see [INSTALL.md](./INSTALL.md) for details and troubleshooting.
 
 ## Configuration and data
 
-Edit the `conf/config.ini` with the settings for your Raspberry and server.
+Copy `config/config.ini.sample` to `conf/config.ini` with the settings for your Raspberry and server.
 
 For playing audio, please adjust `conf/plugins.d/audio.ini`.
 

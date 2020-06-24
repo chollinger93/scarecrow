@@ -11,8 +11,8 @@ vidgear/
 testbench/
 notebooks/*test*.ipynb
 *tmp*
-config/config.ini
-config/plugins.d/*.ini
+conf/config.ini
+conf/plugins.d/*.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
