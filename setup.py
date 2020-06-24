@@ -9,7 +9,7 @@ class ShellInstall(install):
         if not sys.platform.startswith("linux"):
             print('Your platform {} might not be supported'.format(sys.platform))
         subprocess.call(['./sbin/install_tensorflow_models.sh'])
-        subprocess.call(['./sbin/install_vidgear.sh'])
+        #subprocess.call(['./sbin/install_vidgear.sh']) # Switched to vidgear=0.1.8 stable
         install.run(self)
 
 with open("./README.md", "r") as fh:
