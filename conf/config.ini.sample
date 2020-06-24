@@ -1,3 +1,5 @@
+# Overall configuration file
+
 [Video]
 FPS=20
 
@@ -8,14 +10,14 @@ min_confidence=0.7
 DetectionStopThresholdSeconds=20
 
 [ZmqCamera]
-IP=192.168.1.240
+IP=127.0.0.1
 Port=5454
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
 Pattern=1
 
 [ZmqServer]
-IP=192.168.1.240
+IP=127.0.0.1
 Port=5454
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
@@ -23,7 +25,7 @@ Pattern=1
 
 [Tensorflow]
 ModelUrl=ssdlite_mobilenet_v2_coco_2018_05_09
-LabelMapPath=/home/christian/workspace/scarecrow/models/research/object_detection/data/mscoco_label_map.pbtxt
+LabelMapPath=models/research/object_detection/data/mscoco_label_map.pbtxt # Should be an absolute path
 
 [Plugins]
 UseSenderThread=False
