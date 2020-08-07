@@ -2,9 +2,9 @@
 This needs to be done on both the client (i.e., the raspberry) and the server.
 
 # Automatic Setup
-
 This is the preferred way to install `scarecrow`, but it might miss some platform-specific dependencies.
 ```
+pip3 install wheel
 pip3 install . --upgrade
 ```
 
@@ -72,7 +72,8 @@ sudo apt install gstreamer1.0-tools gstreamer1.0-plugins-good # Raspbian only
 
 For `pygame`:
 ```
-sudo apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev
+sudo apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev 
+sudo apt-get build-dep python-pygame
 ```
 
 Install `ffmpeg`, if not installed already:

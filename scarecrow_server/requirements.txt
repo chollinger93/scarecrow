@@ -3,8 +3,6 @@ Pillow==7.1.2
 lxml==4.4.2
 matplotlib==3.1.2
 opencv-python==4.1.2.30
-pycocotools==2.0.0
-numpy==1.18.0
 pyzmq==18.1.1
 libopencv==0.0.1
 playsound==1.2.2
@@ -14,3 +12,4 @@ pytest-cov==2.8.1
 colorlog==4.1.0
 asyncio==3.4.3
 vidgear==0.1.8
+pycocotools==2.0.1

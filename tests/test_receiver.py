@@ -8,6 +8,7 @@ from vidgear.gears import VideoGear
 from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
+RESOURCE_PATH='./resources'
 
 @pytest.fixture
 def zmq_args():
@@ -21,7 +22,7 @@ def zmq_args():
 
 @pytest.fixture
 def zmq_sender(zmq_args):
-    stream = VideoGear(source='../resources/tests/walking_test_5s.mp4',
+    stream = VideoGear(source=RESOURCE_PATH+'/tests/walking_test_5s.mp4',
                        framerate=zmq_args['fps']).start()
     server = NetGear(address=zmq_args['ip'], port=zmq_args['port'],
                      protocol=zmq_args['protocol'],
@@ -37,7 +38,7 @@ def __main_proc_wrap__(conf, detection_threshold, fps, ret_list):
         'res': 0,
         'det': 0
     }
-    for res in main(conf, conf_path='../resources/tests', detection_threshold=detection_threshold, fps=fps, label_path=conf['Tensorflow']['LabelMapPath'],):
+    for res in main(conf, conf_path=RESOURCE_PATH+'/tests', detection_threshold=detection_threshold, fps=fps, label_path=conf['Tensorflow']['LabelMapPath'],):
         logger.info('Got res {}'.format(res))
         __res__['res'] += 1
         if res:
@@ -47,7 +48,7 @@ def __main_proc_wrap__(conf, detection_threshold, fps, ret_list):
 def test_run_camera(zmq_args, zmq_sender):
     # Conf
     conf = configparser.ConfigParser()
-    conf.read('../resources/tests/config.ini')
+    conf.read(RESOURCE_PATH+'/tests/config.ini')
     # Receive
     manager = mp.Manager()
     ret_list = manager.list()
@@ -76,7 +77,7 @@ def test_run_camera(zmq_args, zmq_sender):
 def test_threshold(zmq_args, zmq_sender):
     # Conf
     conf = configparser.ConfigParser()
-    conf.read('../resources/tests/config.ini')
+    conf.read(RESOURCE_PATH+'/tests/config.ini')
     # Receive
     manager = mp.Manager()
     ret_list = manager.list()

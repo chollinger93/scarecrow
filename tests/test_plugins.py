@@ -8,9 +8,10 @@ from scarecrow_core.plugin_base.utils import *
 from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
+RESOURCE_PATH='./resources'
 
-def load_numpy_img(inf='../resources/tests/test_img.jpg'):
-    img = Image.open('../resources/tests/test_img.jpg')
+def load_numpy_img(inf=RESOURCE_PATH+'/tests/test_img.jpg'):
+    img = Image.open(RESOURCE_PATH+'/tests/test_img.jpg')
     return np.array(img)
 
 
@@ -31,7 +32,7 @@ ns = {}
 
 
 def test_load_plugins(plugs):
-    plugins = load_plugins(plugs, '../resources/tests/plugins.d')
+    plugins = load_plugins(plugs, RESOURCE_PATH+'/tests/plugins.d')
     logger.info(plugins)
     assert 'ZmqBasePlugin' in plugins
     assert len(plugins['ZmqBasePlugin']) == 1
@@ -55,12 +56,12 @@ def test_run_image_detector_plugins_before(plugs):
 
 def test_run_image_detector_plugins_after(plugs):
     run_image_detector_plugins_after(
-        ns['loaded_plugins'], True, 0, .5, load_numpy_img('../resources/tests/test_img_labels.jpg'))
+        ns['loaded_plugins'], True, 0, .5, load_numpy_img(RESOURCE_PATH+'/tests/test_img_labels.jpg'))
 
 
 def test_run_image_detector_plugins_after_loop(plugs):
     conf = configparser.ConfigParser()
-    conf.read('../resources/tests/plugins.d/{}.ini'.format('store_video'))
+    conf.read(RESOURCE_PATH+'/tests/plugins.d/{}.ini'.format('store_video'))
     out_path = conf['Video']['Path']
 
     if not os.path.exists(out_path):
@@ -69,7 +70,7 @@ def test_run_image_detector_plugins_after_loop(plugs):
     # Remove old files
     rm_files_in_tree(out_path)
 
-    cap = cv2.VideoCapture('../resources/tests/walking_test_5s.mp4')
+    cap = cv2.VideoCapture(RESOURCE_PATH+'/tests/walking_test_5s.mp4')
     ix = 0
     while(cap.isOpened()):
         ret, image_np = cap.read()
