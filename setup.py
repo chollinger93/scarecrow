@@ -8,6 +8,8 @@ class ShellInstall(install):
     def run(self):
         if not sys.platform.startswith("linux"):
             print('Your platform {} might not be supported'.format(sys.platform))
+        else:
+            print('Running install_tensorflow_models.sh')
         subprocess.call(['./sbin/install_tensorflow_models.sh'])
         #subprocess.call(['./sbin/install_vidgear.sh']) # Switched to vidgear=0.1.8 stable
         install.run(self)
@@ -26,7 +28,7 @@ requirements = requirements_client + requirements_server
 setuptools.setup(
     cmdclass={'install': ShellInstall},
     name="scarecrow-cam",
-    version="0.4",
+    version="0.4.1",
     author="Christian Hollinger",
     author_email="christian@chollinger.com",
     description="A Raspberry Pi powered edge-computing camera setups that runs a Tensorflow object detection model to determine whether a person is on the camera and plays loud audio to scare them off.",
@@ -34,7 +36,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/otter-in-a-suit/scarecrow",
     packages=setuptools.find_packages(),
+    setup_requires=['Cython==0.29.1', 'numpy==1.19.0'],
     install_requires=requirements,
+    extras_require={'pygame': ['pygame==1.9.6'] },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: GNU :: GPLv3",
