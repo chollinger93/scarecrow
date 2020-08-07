@@ -6,10 +6,6 @@ echo "Running tests"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd "${DIR}/.."
 
-echo "Running server tests..."
-cd "${DIR}/../scarecrow_server/"
-pytest -vv -s tests/*.py
-
-echo "Running client tests..."
-cd cd "${DIR}/../scarecrow_server/"
-pytest -vv -s tests/*.py
+echo "Running tests..."
+cd "${DIR}/.."
+pytest -vv -s -x --cov=. --cov-report xml --cov-report html tests/*.py

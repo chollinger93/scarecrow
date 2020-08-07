@@ -1,3 +1,6 @@
 [run]
-omit = */env/*
+omit = 
+    */env/*
+    setup.py
+    *__init__.py
 concurrency = multiprocessing
