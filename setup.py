@@ -36,7 +36,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/otter-in-a-suit/scarecrow",
     packages=setuptools.find_packages(),
-    setup_requires=['Cython==0.29.1', 'numpy==1.19.0'],
+    setup_requires=['Cython==0.29.1', 'numpy==1.19.0', 'anybadge==1.7.0'],
     install_requires=requirements,
     extras_require={'pygame': ['pygame==1.9.6'] },
     classifiers=[
