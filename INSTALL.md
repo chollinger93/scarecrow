@@ -53,7 +53,7 @@ git submodule update --init --recursive && git submodule update --remote
 You can, however, pull them as such:
 ```
 # git clone https://github.com/tensorflow/models.git
-git clone https://github.com/otter-in-a-suit/models.git # Contains bugfix
+git clone https://github.com/chollinger93/models.git # Contains bugfix
 cd models/research
 protoc object_detection/protos/*.proto --python_out=.
 python3 setup.py build 

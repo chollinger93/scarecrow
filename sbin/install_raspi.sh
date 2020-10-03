@@ -27,7 +27,7 @@ sudo apt upgrade
 
 # I'm getting my standard config here - use it if you want 
 mkdir ~/workspace && cd workspace
-git clone https://github.com/otter-in-a-suit/debian-scripts.git
+git clone https://github.com/chollinger93/debian-scripts.git
 cp -r debian-scripts/dotfiles/* ~
 # Adjust my name to pi 
 vim ~/.zshrc 

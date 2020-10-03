@@ -15,6 +15,7 @@ def load_plugins(plugins, conf_path='../conf/plugins.d'):
     """Loads all plugins defined in `__allowed_plugins__`
 
     Args:
+        plugins (list): Plugins to load
         conf_path (str): Configuration path
     
     Raises:
@@ -97,16 +98,20 @@ def send_async_messages(loaded_plugins):
     else:
         logger.warning('No ZmqBasePlugins loaded')
 
-def run_image_detector_plugins_before(loaded_plugins, *args, **kwargs):
+def run_image_detector_plugins_before(loaded_plugins, mode, *args, **kwargs):
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
-            plugin.run_before(*args, **kwargs)
+            logger.debug('run_image_detector_plugins_before mode {} ?= {}'.format(plugin.mode, mode))
+            if plugin.mode == mode:
+                plugin.run_before(*args, **kwargs)
     else:
-        logger.warning('No ImageDetectorBasePlugins loaded')
+        logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
 
-def run_image_detector_plugins_after(loaded_plugins, *args, **kwargs):
+def run_image_detector_plugins_after(loaded_plugins, mode, *args, **kwargs):
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
-            plugin.run_after(*args, **kwargs)
+            logger.debug('run_image_detector_plugins_before mode {} ?= {}'.format(plugin.mode, mode))
+            if plugin.mode == mode:
+                plugin.run_after(*args, **kwargs)
     else:
-        logger.warning('No ImageDetectorBasePlugins loaded')
+        logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))

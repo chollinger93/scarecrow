@@ -34,7 +34,7 @@ setuptools.setup(
     description="A Raspberry Pi powered edge-computing camera setups that runs a Tensorflow object detection model to determine whether a person is on the camera and plays loud audio to scare them off.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/otter-in-a-suit/scarecrow",
+    url="https://github.com/chollinger93/scarecrow",
     packages=setuptools.find_packages(),
     setup_requires=['Cython==0.29.1', 'numpy==1.19.0', 'anybadge==1.7.0'],
     install_requires=requirements,

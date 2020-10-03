@@ -51,7 +51,7 @@ def test_start_receiver_plugins(plugs):
 
 
 def test_run_image_detector_plugins_before(plugs):
-    run_image_detector_plugins_before(ns['loaded_plugins'], load_numpy_img())
+    run_image_detector_plugins_before(ns['loaded_plugins'], 'server', load_numpy_img())
 
 
 def test_run_image_detector_plugins_after(plugs):
@@ -79,7 +79,7 @@ def test_run_image_detector_plugins_after_loop(plugs):
             break
         ix += 1
         run_image_detector_plugins_after(
-            ns['loaded_plugins'], True, ix, .5, image_np)
+            ns['loaded_plugins'], 'server', True, ix, .5, image_np)
 
     # Check output path
     from os import listdir

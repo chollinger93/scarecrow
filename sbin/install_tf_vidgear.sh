@@ -24,7 +24,7 @@ echo "Getting helper scripts..."
 if [ -d "./debian-scripts/" ]; then
     logWarn "Helper scripts exists already, not installing!"
 else 
-    git clone https://github.com/otter-in-a-suit/debian-scripts.git
+    git clone https://github.com/chollinger93/debian-scripts.git
 fi 
 
 source debian-scripts/util/logging.sh
