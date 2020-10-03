@@ -7,19 +7,21 @@ class BasePlugin:
     """Base plugin class
     """
     name = None
+    mode = None
 
-    def __init__(self, configuration):
+    def __init__(self, configuration, mode):
         self.configuration = configuration
+        self.mode = mode
         logger.debug('Loaded plugin {}'.format(self.__class__.__name__))
 
 
 class ImageDetectorBasePlugin(BasePlugin):
-    """Server plugin that runs before and after the image detection
+    """Plugin that runs before and after the image detection
     """
 
-    def __init__(self, configuration):
+    def __init__(self, configuration, mode):
         self.configuration = configuration
-        BasePlugin.__init__(self, configuration)
+        BasePlugin.__init__(self, configuration, mode)
 
     def run_before(self, *args, **kwargs):
         logger.debug('run_before is not implemented in {}'.format(
@@ -30,7 +32,6 @@ class ImageDetectorBasePlugin(BasePlugin):
         logger.debug('run_after is not implemented in {}'.format(
             self.__class__.__name__))
         pass
-
 
 class ZmqBasePlugin(BasePlugin):
     """ZMQ Base plugin to implement sender/receiver plugins
@@ -44,11 +45,11 @@ class ZmqBasePlugin(BasePlugin):
         self.recv_port = configuration['ZmqReceiver']['Port']
         self.send_server = configuration['ZmqSender']['IP']
         self.send_port = configuration['ZmqSender']['Port']
-        BasePlugin.__init__(self, configuration)
+        BasePlugin.__init__(self, configuration, mode='client')
 
 
     def on_receive(self, *args, **kwargs):
-        """Called on receving a message
+        """Called on receiving a message
         """
         logger.debug('on_receive is not implemented in {}'.format(
             self.__class__.__name__))

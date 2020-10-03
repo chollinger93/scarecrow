@@ -9,6 +9,7 @@ logger = get_logger()
 
 class StoreVideoPlugin(ImageDetectorBasePlugin):
     name = 'store_video'
+    mode = 'server'
 
     def __init__(self, configuration):
         self.buffer = []
@@ -22,7 +23,7 @@ class StoreVideoPlugin(ImageDetectorBasePlugin):
             target_len = int(configuration['Video']['TargetLengthSeconds'])
             self.buffer_size = target_len*self.fps
             logger.warning('Using TargetLengthSeconds, setting to {}'.format(self.buffer_size))
-        ImageDetectorBasePlugin.__init__(self, configuration)
+        ImageDetectorBasePlugin.__init__(self, configuration, mode=self.mode)
 
     def run_after(self, res, ix, confidence, np_det_img):
         # TODO: SIGTERM handler

@@ -13,7 +13,7 @@ from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
 
-def run_camera(input_str, address, port, protocol, pattern=0, fps=25):
+def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plugins={}):
     """Runs the camera, sends messages
 
     Args:
@@ -36,9 +36,13 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25):
                      pattern=pattern, receive_mode=False, logging=True)
 
     # infinite loop until [Ctrl+C] is pressed
+    _prev_frame = None
     while True:
         # Sleep
         time.sleep(0.02)
+
+        # Client plugins - before
+        run_image_detector_plugins_before(client_plugins, 'client', _prev_frame)
 
         try:
             frame = stream.read()
@@ -49,6 +53,10 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25):
 
             # send frame to server
             server.send(frame)
+
+            # Client plugins - after
+            run_image_detector_plugins_after(client_plugins, 'client', frame)
+            _prev_frame = frame 
 
         except KeyboardInterrupt:
             # break the infinite loop
@@ -77,8 +85,9 @@ def start():
     conf.read('{}/config.ini'.format(conf_path))
 
     # Plugin ZMQ threads
-    start_receiver_plugins(load_plugins(
-        conf['Plugins']['Enabled'].split(','), conf_path=conf_path+'/plugins.d'))
+    _proc_plugs = load_plugins(
+        conf['Plugins']['Enabled'].split(','), conf_path=conf_path+'/plugins.d')
+    start_receiver_plugins(_proc_plugs)
 
     logger.info('Starting camera stream')
     run_camera(args.in_file, conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['ZmqServer']['Protocol'],

@@ -13,6 +13,7 @@ notebooks/*test*.ipynb
 *tmp*
 conf/config.ini
 conf/plugins.d/*.ini
+releases/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
