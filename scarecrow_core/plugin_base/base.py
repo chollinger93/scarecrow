@@ -8,6 +8,7 @@ class BasePlugin:
     """
     name = None
     mode = None
+    has_ret = False
 
     def __init__(self, configuration, mode):
         self.configuration = configuration

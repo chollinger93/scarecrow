@@ -4,6 +4,7 @@ import multiprocessing as mp
 import configparser
 from scarecrow_core.plugins.audio import AudioPlugin
 from scarecrow_core.plugins.store_video import StoreVideoPlugin
+from scarecrow_core.plugins.motion import MotionDetectionPlugin
 import inspect
 from .interceptor import PluginInterceptor
 from scarecrow_core.utilities.utils import get_logger
@@ -37,7 +38,7 @@ def load_plugins(plugins, conf_path='../conf/plugins.d'):
             continue
         # Check enabled
         if plugin not in pi.allowed_plugins:
-            raise NotImplementedError
+            raise NotImplementedError('Plugin {} not in allowed list: {}'.format(plugin, pi.allowed_plugins))
         else:
             # TODO: enable port conflict scan
             p = pi.allowed_plugins[plugin]
@@ -97,21 +98,38 @@ def send_async_messages(loaded_plugins):
             p.start()
     else:
         logger.warning('No ZmqBasePlugins loaded')
+    if callback:
+        callback()
 
-def run_image_detector_plugins_before(loaded_plugins, mode, *args, **kwargs):
+def _run_image_detector_plugin(typ, loaded_plugins, mode, callback=None, callback_args=[], *args, **kwargs):
+    _cargs = []
+    logger.debug('Loaded Image Detectors in {}: '.format(mode) +str(loaded_plugins))
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
-            logger.debug('run_image_detector_plugins_before mode {} ?= {}'.format(plugin.mode, mode))
+            logger.debug('run_image_detector_plugins_before mode: {} has {} ?= {}'.format(plugin.name, plugin.mode, mode))
             if plugin.mode == mode:
-                plugin.run_before(*args, **kwargs)
+                if typ == 'before':
+                    r = plugin.run_before(*args, **kwargs)
+                else:
+                    r = plugin.run_after(*args, **kwargs)
+                logger.debug('Got args: {}'.format(r))
+                if r:
+                    _cargs.append(r)
     else:
         logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
+    # Callback
+    if callback:
+        callback(*callback_args, *_cargs)
 
-def run_image_detector_plugins_after(loaded_plugins, mode, *args, **kwargs):
+def run_image_detector_plugins_before(loaded_plugins, mode, callback, callback_args, *args, **kwargs):
+    return _run_image_detector_plugin('before', loaded_plugins, mode, callback, callback_args, *args, **kwargs)
+
+def run_image_detector_plugins_after(loaded_plugins, mode, callback, callback_args, *args, **kwargs):
+    return _run_image_detector_plugin('after', loaded_plugins, mode, callback, callback_args, *args, **kwargs)
+
+def load_image_detector_client_plugins(loaded_plugins):
+    _cplugs = []
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
-            logger.debug('run_image_detector_plugins_before mode {} ?= {}'.format(plugin.mode, mode))
-            if plugin.mode == mode:
-                plugin.run_after(*args, **kwargs)
-    else:
-        logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
+            _cplugs.append(plugin)
+    return _cplugs

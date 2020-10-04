@@ -71,7 +71,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
             continue
 
         # Server plugins - before
-        run_image_detector_plugins_before(server_plugins, 'server', image_np)
+        run_image_detector_plugins_before(server_plugins, 'server', None, None, image_np)
 
         # Actual detection.
         res, i, confidence, np_det_img = detect(model, category_index, image_np,
@@ -83,7 +83,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
 
         # Server plugins - after
         run_image_detector_plugins_after(
-            server_plugins, 'server', res, i, confidence, np_det_img)
+            server_plugins, 'server', None, None, res, i, confidence, np_det_img)
 
         key = cv2.waitKey(1) & 0xFF
         # check for 'q' key-press

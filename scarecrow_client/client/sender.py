@@ -1,7 +1,7 @@
 # import libraries
 from vidgear.gears import VideoGear
 from vidgear.gears import NetGear
-
+import numpy as np
 from scarecrow_core.utilities.utils import *
 from scarecrow_core.plugin_base.utils import *
 
@@ -12,6 +12,26 @@ import time
 from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
+def _conditional_send(server, frame, client_plugins, *args):
+    # if we have no plugins, don't bother being conditional
+    _has_ret = False 
+    
+    for p in client_plugins:
+        logger.debug('Plugin {} returns data? {}'.format(p.name, p.has_ret))
+        if p.has_ret:
+            _has_ret = True 
+            break 
+        
+    # Debug
+    logger.debug('_conditional_send args:')
+    for a in args:
+        logger.debug(a)
+
+    if _has_ret and True in args:
+        server.send(frame)
+    else:
+        logger.debug('No ret client plugins, just sending at will')
+        server.send(frame)
 
 def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plugins={}):
     """Runs the camera, sends messages
@@ -35,6 +55,8 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
     server = NetGear(address=address, port=port, protocol=protocol,
                      pattern=pattern, receive_mode=False, logging=True)
 
+    # Plugin parsing
+    c_plugs = load_image_detector_client_plugins(client_plugins)
     # infinite loop until [Ctrl+C] is pressed
     _prev_frame = None
     while True:
@@ -42,7 +64,7 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
         time.sleep(0.02)
 
         # Client plugins - before
-        run_image_detector_plugins_before(client_plugins, 'client', _prev_frame)
+        run_image_detector_plugins_before(client_plugins, 'client', None, None, _prev_frame)
 
         try:
             frame = stream.read()
@@ -51,12 +73,13 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
                 logger.error('No frame available')
                 break
 
-            # send frame to server
-            server.send(frame)
-
             # Client plugins - after
-            run_image_detector_plugins_after(client_plugins, 'client', frame)
+            run_image_detector_plugins_after(client_plugins, 'client', 
+                _conditional_send, [server, frame, c_plugs], np.copy(frame))
             _prev_frame = frame 
+
+            # send frame to server
+            # server.send(frame)
 
         except KeyboardInterrupt:
             # break the infinite loop
@@ -91,7 +114,7 @@ def start():
 
     logger.info('Starting camera stream')
     run_camera(args.in_file, conf['ZmqServer']['IP'], conf['ZmqServer']['Port'], conf['ZmqServer']['Protocol'],
-               int(conf['ZmqServer']['Pattern']), int(conf['Video']['FPS']))
+               int(conf['ZmqServer']['Pattern']), int(conf['Video']['FPS']), client_plugins=_proc_plugs)
 
 if __name__ == "__main__":
     start()
