@@ -13,7 +13,9 @@ class MotionDetectionPlugin(ImageDetectorBasePlugin):
     def run_before(self, frame):
         if frame:
             print('MotionDetectionPlugin run_before')
+        return True
 
     def run_after(self, frame):
          if frame:
             print('MotionDetectionPlugin run_after')
+        return True

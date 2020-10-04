@@ -97,21 +97,29 @@ def send_async_messages(loaded_plugins):
             p.start()
     else:
         logger.warning('No ZmqBasePlugins loaded')
+    if callback:
+        callback()
 
-def run_image_detector_plugins_before(loaded_plugins, mode, *args, **kwargs):
+def _run_image_detector_plugin(typ, loaded_plugins, mode, callback=None, callback_args=[], *args, **kwargs):
+    _cargs = []
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
             logger.debug('run_image_detector_plugins_before mode {} ?= {}'.format(plugin.mode, mode))
             if plugin.mode == mode:
-                plugin.run_before(*args, **kwargs)
+                if typ == 'before':
+                    r = plugin.run_before(*args, **kwargs)
+                else:
+                    r = plugin.run_after(*args, **kwargs)
+                if r:
+                    _cargs.append(r)
     else:
         logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
+    # Callback
+    if callback:
+        callback(*callback_args, *_cargs)
 
-def run_image_detector_plugins_after(loaded_plugins, mode, *args, **kwargs):
-    if 'ImageDetectorBasePlugin' in loaded_plugins:
-        for plugin in loaded_plugins['ImageDetectorBasePlugin']:
-            logger.debug('run_image_detector_plugins_before mode {} ?= {}'.format(plugin.mode, mode))
-            if plugin.mode == mode:
-                plugin.run_after(*args, **kwargs)
-    else:
-        logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
+def run_image_detector_plugins_before(loaded_plugins, mode, callback, callback_args, *args, **kwargs):
+    return _run_image_detector_plugin('before', loaded_plugins, mode, callback, callback_args, *args, **kwargs)
+
+def run_image_detector_plugins_after(loaded_plugins, mode, callback, callback_args, *args, **kwargs):
+    return _run_image_detector_plugin('after', loaded_plugins, mode, callback, callback_args, *args, **kwargs)

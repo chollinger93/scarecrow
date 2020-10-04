@@ -12,6 +12,11 @@ import time
 from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
+def _conditional_send(server, frame, *args):
+    logger.debug('_conditional_send *args: ')
+    for a in args:
+        logger.debug(a)
+    server.send(frame)
 
 def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plugins={}):
     """Runs the camera, sends messages
@@ -42,7 +47,7 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
         time.sleep(0.02)
 
         # Client plugins - before
-        run_image_detector_plugins_before(client_plugins, 'client', _prev_frame)
+        run_image_detector_plugins_before(client_plugins, 'client', None, None, _prev_frame)
 
         try:
             frame = stream.read()
@@ -51,12 +56,12 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
                 logger.error('No frame available')
                 break
 
-            # send frame to server
-            server.send(frame)
-
             # Client plugins - after
-            run_image_detector_plugins_after(client_plugins, 'client', frame)
+            run_image_detector_plugins_after(client_plugins, 'client', _conditional_send, [server, frame], frame)
             _prev_frame = frame 
+
+            # send frame to server
+           # server.send(frame)
 
         except KeyboardInterrupt:
             # break the infinite loop
