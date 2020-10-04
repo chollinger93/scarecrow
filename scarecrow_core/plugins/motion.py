@@ -7,15 +7,15 @@ logger = get_logger()
 class MotionDetectionPlugin(ImageDetectorBasePlugin):
     name = 'motion'
     mode = 'client'
+    has_ret = True 
+    
     def __init__(self, configuration):
-        ClientImageBasePlugin.__init__(self, configuration, self.mode)
+        ImageDetectorBasePlugin.__init__(self, configuration, self.mode)
 
     def run_before(self, frame):
-        if frame:
-            print('MotionDetectionPlugin run_before')
+        print('MotionDetectionPlugin run_before')
         return True
 
     def run_after(self, frame):
-         if frame:
-            print('MotionDetectionPlugin run_after')
+        print('MotionDetectionPlugin run_after')
         return True
