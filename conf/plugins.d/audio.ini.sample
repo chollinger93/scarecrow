@@ -8,5 +8,5 @@ Port=5557
 
 [Audio]
 Streamer=pygame
-# This setting assumes a run with Docker
+# This setting assumes a run with Docker - needs a file called "warning.wav"
 Path=/data

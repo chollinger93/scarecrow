@@ -41,6 +41,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
     # For detection thresholds
     c = 0
     if 'detection_threshold' in kwargs and 'fps' in kwargs:
+        # TODO: this metric is pretty bad - doesn't wait as long as it should
         THRESHOLD_FRAMES = kwargs.get(
             'detection_threshold') * kwargs.get('fps')
         logger.debug('Using {} frames as {}s threshold'.format(
@@ -81,7 +82,9 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
                                                 min_detections, min_confidence)                                     
         if res:
             yield True
-            p_res = res   
+            p_res = res  
+            # Reset offset counter
+            c = 0 
 
         # Server plugins - after
         run_image_detector_plugins_after(

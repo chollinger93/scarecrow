@@ -32,7 +32,7 @@ docker run -it \
     -p 5558:5558 \
     --ipc=host \
     -v $(pwd)/conf:/config \
-    -v $(pwd)/audio_files:/data \
+    -v $(pwd)/resources/audio_files:/data \
     --device=/dev/video2:/dev/video0 \
     scarecrow \
     /usr/local/bin/scarecrow_client --config /config --input 0

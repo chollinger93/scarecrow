@@ -1,7 +1,7 @@
 # Overall configuration file
 
 [Video]
-FPS=20
+FPS=15
 
 [Detection]
 min_detections=10

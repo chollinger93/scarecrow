@@ -83,9 +83,9 @@ class ZmqBasePlugin(BasePlugin):
         socket.bind('tcp://*:{}'.format(self.send_port))
         while True:
             #  Wait for next request from client
-            message = socket.recv()
-            self.on_receive(message)
             try:
+                message = socket.recv()
+                self.on_receive(message)
                 self.process(message)
             except Exception as e:
                 logger.exception(e)

@@ -3,7 +3,6 @@
 ssd_inception*
 resources/videos/*.mp3
 resources/videos/*.mp4
-resources/audio_files/*.mp3
 .vscode/
 blog_snapshots/*
 sbin/debian-scripts/

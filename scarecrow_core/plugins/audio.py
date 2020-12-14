@@ -15,7 +15,7 @@ class AudioPlugin(ZmqBasePlugin):
     def process(self, msg):
         if msg.decode('ascii') == str(Messages.WARN.value):
             logger.debug('Playing warning')
-            self.play_sound('{}/warning.mp3'.format(self.audio_path), self.streamer)
+            self.play_sound('{}/warning.wav'.format(self.audio_path), self.streamer)
         elif msg.decode('ascii') == str(Messages.MUSIC.value):
             logger.debug('Playing Music')
             self.play_sound('{}/music.mp3'.format(self.audio_path), self.streamer)
