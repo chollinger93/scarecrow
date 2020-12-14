@@ -1,7 +1,7 @@
 # Overall configuration file
 
 [Video]
-FPS=20
+FPS=15
 
 [Detection]
 min_detections=10
@@ -9,25 +9,32 @@ min_confidence=0.7
 ; If enabled, sets a threshold in seconds for how long the detection will pause after a detection; -1 = disabled
 DetectionStopThresholdSeconds=20
 
+# This is the receiver / subscriber
+# The server uses this to receive messages
 [ZmqCamera]
-IP=127.0.0.1
+# This is left blank, as it will always bind to `*`
+IP=
 Port=5454
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
 Pattern=1
 
+# This is the publisher, i.e. the camera
 [ZmqServer]
-IP=127.0.0.1
-Port=5454
+# In other words, this is the IP of the camera, despite the name 
+# TODO: change that...
+IP=192.xxx.x.xxx
+Port=5455
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
 Pattern=1
 
 [Tensorflow]
 ModelUrl=ssdlite_mobilenet_v2_coco_2018_05_09
-LabelMapPath=models/research/object_detection/data/mscoco_label_map.pbtxt # Should be an absolute path
+# This setting assumes a run with Docker
+LabelMapPath=/models/mscoco_complete_label_map.pbtxt
 
 [Plugins]
-UseSenderThread=False
-Enabled=store_video,audio
-Disabled=
+UseSenderThread=True
+Enabled=audio
+Disabled=store_video,motion

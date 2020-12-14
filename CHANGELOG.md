@@ -2,9 +2,18 @@
 All changes to the project are documented here.
 
 ## [Unreleased]
-- Switch to vidgear_async for better performance
 - pyPI release 
-- Cleaning up model dependencies from path
+- Motion detection code on client to cut down on network bandwidth
+
+## [0.5] - 2020-12-14
+* Support for easier `Docker` deployment out-of-the-box
+* Changed subscriber model to `REQ/REP`
+* Simplified path management using `Docker`
+* Simplified logging
+* Various bugfixes
+
+## [0.4.2] - 2020-10-04
+* Added support for client plugin callbacks
 
 ## [0.4.1] - 2020-08-07
 

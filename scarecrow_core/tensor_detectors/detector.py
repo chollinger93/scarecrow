@@ -117,7 +117,13 @@ def detect(model, category_index, image_np, i, confidence, min_detections=10, mi
         use_normalized_coordinates=True,
         line_thickness=8)
 
-    cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
+    # Only if we have an X-Server - not Docker
+    if 'DISPLAY' in os.environ:
+        try:
+            cv2.imshow('object_detection', cv2.resize(image_np, (800, 600)))
+        except Exception:
+            pass
+   
     # print the most likely
     if 'detection_scores' not in output_dict or len(category_index) < 1 or len(output_dict['detection_scores']) <= 0:
         return (False, i, confidence, np_det_img)

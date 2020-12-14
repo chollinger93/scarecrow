@@ -8,6 +8,15 @@ pip3 install wheel
 pip3 install . --upgrade
 ```
 
+# Using Docker (recommended)
+
+![Docker](./docs/horizontal-logo-monochromatic-white.png)
+
+Using `Docker` is the preferred way of running `scarecrow`, as it handles dependencies internally and operates within a controllable environment.
+
+**Please see [README.md](README.md) for details**
+
+
 # Manual
 If for some reason, the `setup.py` does not work, the steps below show the manual installation route.
 

@@ -22,15 +22,10 @@ def _conditional_send(server, frame, client_plugins, *args):
             _has_ret = True 
             break 
         
-    # Debug
-    logger.debug('_conditional_send args:')
-    for a in args:
-        logger.debug(a)
-
     if _has_ret and True in args:
         server.send(frame)
     else:
-        logger.debug('No ret client plugins, just sending at will')
+        #logger.debug('No ret client plugins, just sending at will')
         server.send(frame)
 
 def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plugins={}):
@@ -49,11 +44,15 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
     else:
         input = input_str
 
+    options = {'THREADED_QUEUE_MODE': False}
+    if address == '':
+        address = None
     # Open any video stream; `framerate` here is just for picamera
-    stream = VideoGear(source=input, framerate=fps).start()
+    stream = VideoGear(source=input, framerate=fps, **options).start()
     # server = NetGear() # Locally
+    netgear_options = {'max_retries': 10, 'request_timeout': 10}
     server = NetGear(address=address, port=port, protocol=protocol,
-                     pattern=pattern, receive_mode=False, logging=True)
+                     pattern=pattern, receive_mode=False, logging=True, **netgear_options)
 
     # Plugin parsing
     c_plugs = load_image_detector_client_plugins(client_plugins)
@@ -97,6 +96,8 @@ def start():
                         help='Input file (0 for webcam)')
     parser.add_argument('--config', '-c', dest='conf_path', type=str, required=True,
                         help='Path to config dir')
+    import sys
+    print(f'Args: {sys.argv}')
     args = parser.parse_args()
     # Conf
     conf = configparser.ConfigParser()

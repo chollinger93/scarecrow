@@ -1,5 +1,5 @@
 import zmq
-
+import time
 from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
@@ -79,20 +79,29 @@ class ZmqBasePlugin(BasePlugin):
             self.__class__.__name__))
         context = zmq.Context()
         socket = context.socket(zmq.REP)
-        logger.debug('Binding to {}'.format(self.send_server))
+        logger.debug('Binding to {}:{}'.format(self.send_server, self.send_port))
         socket.bind('tcp://*:{}'.format(self.send_port))
         while True:
             #  Wait for next request from client
-            message = socket.recv()
-            self.on_receive(message)
-            self.process(message)
-            self.send_ack(socket)
+            try:
+                message = socket.recv(zmq.NOBLOCK)
+                self.on_receive(message)
+                self.process(message)
+            except zmq.ZMQError as ze:
+                # it's fine, NOBLOCK
+                time.sleep(0.01)
+                continue
+            except Exception as e:
+                logger.exception(e)
+                # No matter what, acknowledge - otherwise, we're blocking!!
+                self.send_ack(socket)
 
     def start_sender(self, *args, **kwargs):
         """Starts the main sender loop
         """
         context = zmq.Context()
         socket = context.socket(zmq.REQ)
+        logger.debug(f'Starting sender in {self.__class__.__name__} on {self.recv_server}:{self.recv_port}')
         socket.connect('tcp://{}:{}'.format(self.recv_server, self.recv_port))
         self.send(socket)
         self.on_ack(socket)

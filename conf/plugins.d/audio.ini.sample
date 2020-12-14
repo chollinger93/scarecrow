@@ -1,11 +1,12 @@
 [ZmqSender]
-IP=127.0.0.1
-Port=5557
+IP=0.0.0.0
+Port=5558
 
 [ZmqReceiver]
-IP=127.0.0.1
-Port=5557
+IP=0.0.0.0
+Port=5558
 
 [Audio]
 Streamer=pygame
-Path=../audio_files
+# This setting assumes a run with Docker - needs a file called "warning.wav"
+Path=/data
