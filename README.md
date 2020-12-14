@@ -89,6 +89,7 @@ docker run -it \
     --ipc=host \
     -v $(pwd)/conf:/config \
     -v $(pwd)/resources/audio_files:/data \
+    --device /dev/snd:/dev/snd \
     --device=/dev/video2:/dev/video0 \
     scarecrow \
     /usr/local/bin/scarecrow_client --config /config --input 0

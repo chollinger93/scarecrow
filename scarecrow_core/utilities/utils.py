@@ -43,5 +43,7 @@ def get_logger(conf_path='../../conf/logger.ini'):
         handler.setFormatter(formatter)
         logger = logging.getLogger('scarecrow')
         logger.setLevel(logging.DEBUG)
+        if (logger.hasHandlers()):
+            logger.handlers.clear()
         logger.addHandler(handler)
         return logger

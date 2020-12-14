@@ -25,7 +25,7 @@ COPY models/ ./models/
 
 # Install protoc
 RUN apt-get update 
-RUN apt install -y protobuf-compiler
+RUN apt-get install -y protobuf-compiler alsa-utils
 
 # Update pip
 RUN pip install --upgrade pip 

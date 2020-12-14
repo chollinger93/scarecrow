@@ -22,15 +22,10 @@ def _conditional_send(server, frame, client_plugins, *args):
             _has_ret = True 
             break 
         
-    # Debug
-    logger.debug('_conditional_send args:')
-    for a in args:
-        logger.debug(a)
-
     if _has_ret and True in args:
         server.send(frame)
     else:
-        logger.debug('No ret client plugins, just sending at will')
+        #logger.debug('No ret client plugins, just sending at will')
         server.send(frame)
 
 def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plugins={}):

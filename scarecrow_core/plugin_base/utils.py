@@ -103,7 +103,7 @@ def send_async_messages(loaded_plugins, callback=None):
 
 def _run_image_detector_plugin(typ, loaded_plugins, mode, callback=None, callback_args=[], *args, **kwargs):
     _cargs = []
-    logger.debug('Loaded Image Detectors in {}: '.format(mode) +str(loaded_plugins))
+    #logger.debug('Loaded Image Detectors in {}: '.format(mode) +str(loaded_plugins))
     if 'ImageDetectorBasePlugin' in loaded_plugins:
         for plugin in loaded_plugins['ImageDetectorBasePlugin']:
             logger.debug('run_image_detector_plugins_before mode: {} has {} ?= {}'.format(plugin.name, plugin.mode, mode))

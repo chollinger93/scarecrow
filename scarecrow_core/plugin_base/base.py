@@ -1,5 +1,5 @@
 import zmq
-
+import time
 from scarecrow_core.utilities.utils import get_logger
 logger = get_logger()
 
@@ -84,9 +84,13 @@ class ZmqBasePlugin(BasePlugin):
         while True:
             #  Wait for next request from client
             try:
-                message = socket.recv()
+                message = socket.recv(zmq.NOBLOCK)
                 self.on_receive(message)
                 self.process(message)
+            except zmq.ZMQError as ze:
+                # it's fine, NOBLOCK
+                time.sleep(0.01)
+                continue
             except Exception as e:
                 logger.exception(e)
                 # No matter what, acknowledge - otherwise, we're blocking!!
