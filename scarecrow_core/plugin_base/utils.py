@@ -12,7 +12,7 @@ logger = get_logger()
 
 # Read config
 
-def load_plugins(plugins, conf_path='../conf/plugins.d'):
+def load_plugins(plugins, conf_path):
     """Loads all plugins defined in `__allowed_plugins__`
 
     Args:
@@ -69,7 +69,7 @@ def start_receiver_plugins(loaded_plugins):
             p.start()
             procs.append(p)
     else:
-        logger.warning('No ZmqBasePlugins loaded')
+        logger.debug('No ZmqBasePlugins loaded')
     return procs
 
 def send_messages(loaded_plugins):
@@ -82,7 +82,7 @@ def send_messages(loaded_plugins):
         for se in loaded_plugins['ZmqBasePlugin']:
             se.start_sender()
     else:
-        logger.warning('No ZmqBasePlugins loaded')
+        logger.debug('No ZmqBasePlugins loaded')
 
 def send_async_messages(loaded_plugins):
     """Starts a separate thread to send all messages
@@ -97,7 +97,7 @@ def send_async_messages(loaded_plugins):
             p.daemon = True
             p.start()
     else:
-        logger.warning('No ZmqBasePlugins loaded')
+        logger.debug('No ZmqBasePlugins loaded')
     if callback:
         callback()
 
@@ -116,7 +116,8 @@ def _run_image_detector_plugin(typ, loaded_plugins, mode, callback=None, callbac
                 if r:
                     _cargs.append(r)
     else:
-        logger.warning('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
+        #logger.debug('No ImageDetectorBasePlugins ({}) loaded'.format(mode))
+        pass
     # Callback
     if callback:
         callback(*callback_args, *_cargs)

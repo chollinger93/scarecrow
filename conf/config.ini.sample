@@ -10,22 +10,24 @@ min_confidence=0.7
 DetectionStopThresholdSeconds=20
 
 [ZmqCamera]
-IP=127.0.0.1
+IP=0.0.0.0
 Port=5454
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
-Pattern=1
+Pattern=2
 
+# Runs tensorflow
 [ZmqServer]
-IP=127.0.0.1
-Port=5454
+IP=0.0.0.0
+Port=5455
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
-Pattern=1
+Pattern=2
 
 [Tensorflow]
 ModelUrl=ssdlite_mobilenet_v2_coco_2018_05_09
-LabelMapPath=models/research/object_detection/data/mscoco_label_map.pbtxt # Should be an absolute path
+# This setting assumes a run with Docker
+LabelMapPath=/models/mscoco_complete_label_map.pbtxt
 
 [Plugins]
 UseSenderThread=False

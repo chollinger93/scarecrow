@@ -3,6 +3,12 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ppath=$(pwd)
 
+which protoc 
+if [[ $? -ne 0 ]]; then 
+    echo "Please install the protobuf-compiler!"
+    exit 1
+fi
+
 cd "${DIR}/.."
 # Clone
 if [ -d "./models/" ]; then

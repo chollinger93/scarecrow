@@ -35,10 +35,13 @@ def get_logger(conf_path='../../conf/logger.ini'):
         log_conf = os.path.join(file_dir, conf_path)
         logging.config.fileConfig(log_conf, disable_existing_loggers=False)
         logger = logging.getLogger()
+        return logger
     except Exception:
+        print(f'Cannot find logging config at {conf_path}')
         formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)
         logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
         logger.addHandler(handler)
-    return logger
+        return logger

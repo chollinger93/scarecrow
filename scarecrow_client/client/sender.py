@@ -97,6 +97,8 @@ def start():
                         help='Input file (0 for webcam)')
     parser.add_argument('--config', '-c', dest='conf_path', type=str, required=True,
                         help='Path to config dir')
+    import sys
+    print(f'Args: {sys.argv}')
     args = parser.parse_args()
     # Conf
     conf = configparser.ConfigParser()

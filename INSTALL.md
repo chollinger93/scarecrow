@@ -8,6 +8,50 @@ pip3 install wheel
 pip3 install . --upgrade
 ```
 
+# Using Docker (recommended)
+
+![Docker](./docs/horizontal-logo-monochromatic-white.png)
+
+Using `Docker` is the preferred way of running `scarecrow`, as it handles dependencies internally and operates within a controllable environment.
+
+## Build Image
+```
+git submodule update --init --recursive && git submodule update --remote
+docker build . -t scarecrow
+```
+
+## Run
+Both `client` and `server` containers should be ran separately.
+
+### Client
+*Check cameras in `/dev` with `ffplay /dev/video$x`*
+
+```
+docker run -it \
+    -p 5454:5454 \
+    -p 5558:5558 \
+    --ipc=host \
+    -v $(pwd)/conf:/config \
+    -v $(pwd)/audio_files:/data \
+    --device=/dev/video2:/dev/video0 \
+    scarecrow \
+    /usr/local/bin/scarecrow_client --config /config --input 0
+```
+
+### Server
+This runs `tensorflow` and opens the `zmq` listener.
+```
+docker run -it \
+    -p 5455:5455 \
+    -p 5557:5557 \
+    --ipc=host \
+    -v $(pwd)/conf:/config \
+    -v $(pwd)/models/research/object_detection/data:/models \
+    scarecrow \
+    /usr/local/bin/scarecrow_server --config /config
+```
+
+
 # Manual
 If for some reason, the `setup.py` does not work, the steps below show the manual installation route.
 
