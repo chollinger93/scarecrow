@@ -9,16 +9,21 @@ min_confidence=0.7
 ; If enabled, sets a threshold in seconds for how long the detection will pause after a detection; -1 = disabled
 DetectionStopThresholdSeconds=20
 
+# This is the receiver / subscriber
+# The server uses this to receive messages
 [ZmqCamera]
-IP=0.0.0.0
+# This is left blank, as it will always bind to `*`
+IP=
 Port=5454
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
 Pattern=1
 
-# Runs tensorflow
+# This is the publisher, i.e. the camera
 [ZmqServer]
-IP=0.0.0.0
+# In other words, this is the IP of the camera, despite the name 
+# TODO: change that...
+IP=192.xxx.x.xxx
 Port=5455
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
@@ -30,6 +35,6 @@ ModelUrl=ssdlite_mobilenet_v2_coco_2018_05_09
 LabelMapPath=/models/mscoco_complete_label_map.pbtxt
 
 [Plugins]
-UseSenderThread=False
-Enabled=store_video,audio
-Disabled=
+UseSenderThread=True
+Enabled=audio
+Disabled=store_video,motion

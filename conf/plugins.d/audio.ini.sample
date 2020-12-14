@@ -4,7 +4,7 @@ Port=5558
 
 [ZmqReceiver]
 IP=0.0.0.0
-Port=5557
+Port=5558
 
 [Audio]
 Streamer=pygame

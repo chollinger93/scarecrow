@@ -61,14 +61,29 @@ git submodule update --init --recursive && git submodule update --remote
 docker build . -t scarecrow
 ```
 
-### Run
+### Run separately
 Both `client` and `server` containers should be ran separately.
+
+
+#### Server
+This runs `tensorflow` and opens the `zmq` listener.
+```
+docker run -it \
+    --name scarecrow_server \
+    -p 5455:5454 \
+    --ipc=host \
+    -v $(pwd)/conf:/config \
+    -v $(pwd)/models/research/object_detection/data:/models \
+    scarecrow \
+    /usr/local/bin/scarecrow_server --config /config
+```
 
 #### Client
 *Check cameras in `/dev` with `ffplay /dev/video$x`*
 
 ```
 docker run -it \
+    --name scarecrow_client \
     -p 5454:5454 \
     -p 5558:5558 \
     --ipc=host \
@@ -79,23 +94,10 @@ docker run -it \
     /usr/local/bin/scarecrow_client --config /config --input 0
 ```
 
-#### Server
-This runs `tensorflow` and opens the `zmq` listener.
+### Docker Compose
+**Experimental**
 ```
-docker run -it \
-    -p 5455:5454 \
-    -p 5557:5557 \
-    --ipc=host \
-    -v $(pwd)/conf:/config \
-    -v $(pwd)/models/research/object_detection/data:/models \
-    scarecrow \
-    /usr/local/bin/scarecrow_server --config /config
-```
-
-## Docker Compose
-Alternatively:
-```
-docker compose up
+docker-compose up
 ```
 
 ## Manual install (advanced)

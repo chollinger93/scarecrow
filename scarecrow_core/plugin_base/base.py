@@ -79,7 +79,7 @@ class ZmqBasePlugin(BasePlugin):
             self.__class__.__name__))
         context = zmq.Context()
         socket = context.socket(zmq.REP)
-        logger.debug('Binding to {}'.format(self.send_server))
+        logger.debug('Binding to {}:{}'.format(self.send_server, self.send_port))
         socket.bind('tcp://*:{}'.format(self.send_port))
         while True:
             #  Wait for next request from client

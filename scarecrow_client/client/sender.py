@@ -50,6 +50,8 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
         input = input_str
 
     options = {'THREADED_QUEUE_MODE': False}
+    if address == '':
+        address = None
     # Open any video stream; `framerate` here is just for picamera
     stream = VideoGear(source=input, framerate=fps, **options).start()
     # server = NetGear() # Locally

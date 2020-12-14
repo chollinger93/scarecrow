@@ -1,21 +1,29 @@
 version: '3'
 services:
-  server:
+  scarecrow-server:
       build: .
-      ipc: host
       image: scarecrow
+      networks:
+        scarecrow-net:
+            ipv4_address: 10.1.0.100
       ports:
-          - "5454:5454"
+          - "5455:5454"
           - "5557:5557"
       volumes:
           - ./conf:/config
           - ./models/research/object_detection/data:/models
-      command: ["/usr/local/bin/scarecrow_server --config /config"]
+      command: ["/usr/local/bin/scarecrow_server", "--config", "/config"]
+      deploy:
+        restart_policy:
+            condition: any
 
-  worker:
+
+  scarecrow-camera:
       build: .
-      ipc: host
       image: scarecrow
+      networks: 
+        scarecrow-net:
+            ipv4_address: 10.1.0.101
       ports:
           - "5454:5454"
           - "5558:5558"
@@ -24,4 +32,17 @@ services:
           - ./resources/audio_files:/data
       devices: 
           - /dev/video2:/dev/video0
-      command: ["/usr/local/bin/scarecrow_client --config /config --input 0"]
+      deploy:
+        restart_policy:
+            condition: any
+      command: ["/usr/local/bin/scarecrow_client", "--config", "/config", "--input", "0"]
+      depends_on:
+            - scarecrow-server
+
+networks:
+    scarecrow-net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+            - subnet: 10.1.0.0/24

@@ -33,6 +33,8 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
     Yields:
         bool: True for a successful detection
     """
+    if address == '':
+        address = None
     logger.info(f'Attempting to bind to {address}:{port} over {protocol} and pattern {pattern}')
     options = {'THREADED_QUEUE_MODE': False}
     client = NetGear(address=address, port=str(port), protocol=protocol,
@@ -63,7 +65,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
         logger.debug('Image received')
         image_np = np.copy(frame)
         # check if frame is None
-        if image_np is None or image_np.size <= 0:
+        if frame is None or image_np is None or image_np.size <= 0:
             logger.error('No frame available')
             break
 
@@ -81,6 +83,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
             res, i, confidence, np_det_img = detect(model, category_index, image_np,
                                                     i, confidence,
                                                     min_detections, min_confidence)                                     
+            logger.debug(f'Result: {res}, confidence: {confidence}')
             if res:
                 yield True
                 p_res = res  
