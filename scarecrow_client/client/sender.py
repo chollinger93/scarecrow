@@ -49,11 +49,13 @@ def run_camera(input_str, address, port, protocol, pattern=0, fps=25, client_plu
     else:
         input = input_str
 
+    options = {'THREADED_QUEUE_MODE': False}
     # Open any video stream; `framerate` here is just for picamera
-    stream = VideoGear(source=input, framerate=fps).start()
+    stream = VideoGear(source=input, framerate=fps, **options).start()
     # server = NetGear() # Locally
+    netgear_options = {'max_retries': 10, 'request_timeout': 10}
     server = NetGear(address=address, port=port, protocol=protocol,
-                     pattern=pattern, receive_mode=False, logging=True)
+                     pattern=pattern, receive_mode=False, logging=True, **netgear_options)
 
     # Plugin parsing
     c_plugs = load_image_detector_client_plugins(client_plugins)

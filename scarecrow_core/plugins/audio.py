@@ -28,6 +28,7 @@ class AudioPlugin(ZmqBasePlugin):
 
     def send(self, socket, *args):
         msg = Messages.WARN
+        logger.debug(f'Sending msg {msg} to {self.recv_server}:{self.recv_port}')
         socket.send_string(str(msg.value))
 
     def play_sound(self, input, streamer='pygame'):

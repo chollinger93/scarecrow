@@ -14,7 +14,7 @@ IP=0.0.0.0
 Port=5454
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
-Pattern=2
+Pattern=1
 
 # Runs tensorflow
 [ZmqServer]
@@ -22,7 +22,7 @@ IP=0.0.0.0
 Port=5455
 Protocol=tcp
 ; 0=zmq.PAIR, 1=zmq.REQ/zmq.REP; 2=zmq.PUB,zmq.SUB
-Pattern=2
+Pattern=1
 
 [Tensorflow]
 ModelUrl=ssdlite_mobilenet_v2_coco_2018_05_09

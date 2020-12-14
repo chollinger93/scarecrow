@@ -84,7 +84,7 @@ def send_messages(loaded_plugins):
     else:
         logger.debug('No ZmqBasePlugins loaded')
 
-def send_async_messages(loaded_plugins):
+def send_async_messages(loaded_plugins, callback=None):
     """Starts a separate thread to send all messages
     
     Args:

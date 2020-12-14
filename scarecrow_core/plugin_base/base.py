@@ -85,14 +85,19 @@ class ZmqBasePlugin(BasePlugin):
             #  Wait for next request from client
             message = socket.recv()
             self.on_receive(message)
-            self.process(message)
-            self.send_ack(socket)
+            try:
+                self.process(message)
+            except Exception as e:
+                logger.exception(e)
+                # No matter what, acknowledge - otherwise, we're blocking!!
+                self.send_ack(socket)
 
     def start_sender(self, *args, **kwargs):
         """Starts the main sender loop
         """
         context = zmq.Context()
         socket = context.socket(zmq.REQ)
+        logger.debug(f'Starting sender in {self.__class__.__name__} on {self.recv_server}:{self.recv_port}')
         socket.connect('tcp://{}:{}'.format(self.recv_server, self.recv_port))
         self.send(socket)
         self.on_ack(socket)

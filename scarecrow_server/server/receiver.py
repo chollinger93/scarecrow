@@ -33,8 +33,10 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
     Yields:
         bool: True for a successful detection
     """
+    logger.info(f'Attempting to bind to {address}:{port} over {protocol} and pattern {pattern}')
+    options = {'THREADED_QUEUE_MODE': False}
     client = NetGear(address=address, port=str(port), protocol=protocol,
-                     pattern=pattern, receive_mode=True, logging=True)  # Define netgear client at Server IP address.
+                     pattern=pattern, receive_mode=True, logging=True, **options)  # Define netgear client at Server IP address.
 
     # For detection thresholds
     c = 0
@@ -133,8 +135,10 @@ def main(conf, conf_path, label_path, **kwargs):
                        **kwargs):
         logger.debug('Received signal')
         if kwargs.get('use_sender_thread', False):
+            logger.debug('use_sender_thread is true')
             send_async_messages(loaded_plugins)
         else:
+            logger.debug('use_sender_thread is false')
             send_messages(loaded_plugins)
         # For downstream
         yield res
