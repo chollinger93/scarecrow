@@ -3,7 +3,6 @@
 ssd_inception*
 resources/videos/*.mp3
 resources/videos/*.mp4
-resources/audio_files/*.mp3
 .vscode/
 blog_snapshots/*
 sbin/debian-scripts/
@@ -13,6 +12,9 @@ notebooks/*test*.ipynb
 *tmp*
 conf/config.ini
 conf/plugins.d/*.ini
+releases/
+test_conf/
+resources/*.tar.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

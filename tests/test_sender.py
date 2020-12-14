@@ -15,6 +15,7 @@ def zmq_args():
     args['port'] = '5454'
     args['protocol'] = 'tcp'
     args['fps'] = 10
+    args['pattern'] = 0
     return args
 
 
@@ -22,7 +23,7 @@ def zmq_args():
 def zmq_receiver(zmq_args):
     client = NetGear(address=zmq_args['ip'], port=zmq_args['port'],
                      protocol=zmq_args['protocol'],
-                     pattern=0, receive_mode=True, logging=True)
+                     pattern=zmq_args['pattern'], receive_mode=True, logging=True)
 
     yield client
     # Close
@@ -34,16 +35,21 @@ def test_run_camera(zmq_args, zmq_receiver):
                                             zmq_args['ip'],
                                             zmq_args['port'],
                                             zmq_args['protocol'],
+                                            zmq_args['pattern'],
                                             zmq_args['fps'], ))
     p.start()
     p.Daemon = True
     # Receive
     logger.info('Starting receiver')
+    frames = []
     for i in range(5):
         frame = zmq_receiver.recv()
-        assert frame is not None
         logger.info('Image received')
+        frames.append(frame)
         time.sleep(1)
     logger.info('Shutdown')
     p.terminate()
     p.join()
+    assert len(frames) == 5
+    for f in frames:
+        print(f)

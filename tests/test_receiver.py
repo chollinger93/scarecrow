@@ -17,6 +17,7 @@ def zmq_args():
     args['port'] = '5454'
     args['protocol'] = 'tcp'
     args['fps'] = 10
+    args['pattern'] = 0
     return args
 
 
@@ -26,7 +27,7 @@ def zmq_sender(zmq_args):
                        framerate=zmq_args['fps']).start()
     server = NetGear(address=zmq_args['ip'], port=zmq_args['port'],
                      protocol=zmq_args['protocol'],
-                     pattern=0, receive_mode=False, logging=True)
+                     pattern=zmq_args['pattern'], receive_mode=False, logging=True)
 
     yield (stream, server)
     # Close
@@ -63,7 +64,7 @@ def test_run_camera(zmq_args, zmq_sender):
     logger.info('Starting sender')
     for i in range(5):
         frame = zmq_sender[0].read()
-        logger.info('Sending frame')
+        logger.info(f'Sending frame: {frame[:1]}')
         zmq_sender[1].send(frame)
         time.sleep(1)
     logger.info('Shutdown')

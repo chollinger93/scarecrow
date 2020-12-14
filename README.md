@@ -7,7 +7,7 @@ Based on the detection criteria, a **plugin model** allows to trigger downstream
 
 *Based on my [blog](https://chollinger.com/blog/2019/12/tensorflow-on-edge-or-building-a-smart-security-camera-with-a-raspberry-pi/).*
 
-## Architecture
+# Architecture
 ![Architecture](./docs/architecture.png)
 
 ![Sample](./docs/cam_1.png)
@@ -16,25 +16,10 @@ Based on the detection criteria, a **plugin model** allows to trigger downstream
 
 *You can change this behavior by relying on a local `tensorflor` instance and having the `ZMQ` communication run over `localhost`.*
 
-## Updates
+# Updates
 Please see [CHANGELOG.md](./CHANGELOG.md) for details.
 
-## Requirements
-This project requires:
-* A Raspberry Pi + the camera module v2 (the `client`) 
-* Any Linux machine on the same network (the `server`)
-
-![Pi](./docs/pi.jpg)
-
-## Install
-`scarecrow-cam` can be installed using pip:
-```
-pip3 install . --upgrade
-```
-
-Please see [INSTALL.md](./INSTALL.md) for details and troubleshooting.
-
-## Configuration and data
+# Configuration and data
 
 Copy `config/config.ini.sample` to `conf/config.ini` with the settings for your Raspberry and server.
 
@@ -54,20 +39,88 @@ ModelUrl=ssd_mobilenet_v3_large_coco_2019_08_14
 LabelMapPath=./models/research/object_detection/data/mscoco_label_map.pbtxt
 ```
 
-## Run
+# Installing
 
-### On the raspberry
+## Requirements
+This project requires:
+* A Raspberry Pi + the camera module v2 (the `client`) 
+* Any Linux machine on the same network (the `server`)
+
+![Pi](./docs/pi.jpg)
+
+
+## Using Docker (recommended)
+
+![Docker](./docs/horizontal-logo-monochromatic-white.png)
+
+Using `Docker` is the preferred way of running `scarecrow`, as it handles dependencies internally and operates within a controllable environment.
+
+### Build Image
+```
+git submodule update --init --recursive && git submodule update --remote
+docker build . -t scarecrow
+```
+
+### Run separately
+Both `client` and `server` containers should be ran separately.
+
+
+#### Server
+This runs `tensorflow` and opens the `zmq` listener.
+```
+docker run -it \
+    --name scarecrow_server \
+    -p 5455:5454 \
+    --ipc=host \
+    -v $(pwd)/conf:/config \
+    -v $(pwd)/models/research/object_detection/data:/models \
+    scarecrow \
+    /usr/local/bin/scarecrow_server --config /config
+```
+
+#### Client
+*Check cameras in `/dev` with `ffplay /dev/video$x`*
+
+```
+docker run -it \
+    --name scarecrow_client \
+    -p 5454:5454 \
+    -p 5558:5558 \
+    --ipc=host \
+    -v $(pwd)/conf:/config \
+    -v $(pwd)/resources/audio_files:/data \
+    --device /dev/snd:/dev/snd \
+    --device=/dev/video2:/dev/video0 \
+    scarecrow \
+    /usr/local/bin/scarecrow_client --config /config --input 0
+```
+
+### Docker Compose
+**Experimental**
+```
+docker-compose up
+```
+
+## Manual install (advanced)
+`scarecrow-cam` can be installed using pip:
+```
+pip3 install . --upgrade
+```
+
+Please see [INSTALL.md](./INSTALL.md) for details and troubleshooting.
+
+### Run (RasPi)
 ```
 scarecrow_client --config ./conf --input 0 # for picam
 scarecrow_client --config ./conf --input ./resources/tests/walking_test_5s.mp4 # for local video 
 ```
 
-### On the server
+### Run (Server)
 ```
 scarecrow_server --config ./conf
 ```
 
-## Plugins
+# Plugins
 A plugin model allows to trigger downstream actions. These actions are triggered based on the configuration.
 
 Plugins can be enabled by setting the following in `config.ini`:
@@ -84,8 +137,8 @@ Currently, the following plugins are avaibale:
 | `audio`  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
 | `store_video`  | Stores video files on the server, with a defined buffer or length | `Path` and `Encoding` settings | `conf/plugins.d/store_video.ini` | `ZServerMQ` |
 
-## How to contribute
+# How to contribute
 This project is in an **early state of development**. Therefore,  there are several open items that need to be covered. Please see [TODO](TODO.md) for details. 
 
-## License
+# License
 This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details.

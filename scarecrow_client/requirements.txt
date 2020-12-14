@@ -12,3 +12,4 @@ colorlog==4.1.0
 asyncio==3.4.3
 vidgear==0.1.8
 pycocotools==2.0.1
+pygame==2.0.0

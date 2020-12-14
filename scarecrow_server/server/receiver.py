@@ -33,12 +33,17 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
     Yields:
         bool: True for a successful detection
     """
+    if address == '':
+        address = None
+    logger.info(f'Attempting to bind to {address}:{port} over {protocol} and pattern {pattern}')
+    options = {'THREADED_QUEUE_MODE': False}
     client = NetGear(address=address, port=str(port), protocol=protocol,
-                     pattern=pattern, receive_mode=True, logging=True)  # Define netgear client at Server IP address.
+                     pattern=pattern, receive_mode=True, logging=True, **options)  # Define netgear client at Server IP address.
 
     # For detection thresholds
     c = 0
     if 'detection_threshold' in kwargs and 'fps' in kwargs:
+        # TODO: this metric is pretty bad - doesn't wait as long as it should
         THRESHOLD_FRAMES = kwargs.get(
             'detection_threshold') * kwargs.get('fps')
         logger.debug('Using {} frames as {}s threshold'.format(
@@ -60,7 +65,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
         logger.debug('Image received')
         image_np = np.copy(frame)
         # check if frame is None
-        if image_np is None:
+        if frame is None or image_np is None or image_np.size <= 0:
             logger.error('No frame available')
             break
 
@@ -70,21 +75,28 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
             logger.debug('Below threshold, dropping frame at {}'.format(c))
             continue
 
-        # Server plugins - before
-        run_image_detector_plugins_before(server_plugins, image_np)
+        try:
+            # Server plugins - before
+            run_image_detector_plugins_before(server_plugins, 'server', None, None, image_np)
 
-        # Actual detection.
-        res, i, confidence, np_det_img = detect(model, category_index, image_np,
-                                                i, confidence,
-                                                min_detections, min_confidence)                                     
-        if res:
-            yield True
-            p_res = res   
+            # Actual detection.
+            res, i, confidence, np_det_img = detect(model, category_index, image_np,
+                                                    i, confidence,
+                                                    min_detections, min_confidence)                                     
+            logger.debug(f'Result: {res}, confidence: {confidence}')
+            if res:
+                yield True
+                p_res = res  
+                # Reset offset counter
+                c = 0 
 
-        # Server plugins - after
-        run_image_detector_plugins_after(
-            server_plugins, res, i, confidence, np_det_img)
-
+            # Server plugins - after
+            run_image_detector_plugins_after(
+                server_plugins, 'server', None, None, res, i, confidence, np_det_img)
+        except Exception as e:
+            logger.exception(e)
+            continue
+        
         key = cv2.waitKey(1) & 0xFF
         # check for 'q' key-press
         if key == ord("q"):
@@ -133,8 +145,10 @@ def main(conf, conf_path, label_path, **kwargs):
                        **kwargs):
         logger.debug('Received signal')
         if kwargs.get('use_sender_thread', False):
+            logger.debug('use_sender_thread is true')
             send_async_messages(loaded_plugins)
         else:
+            logger.debug('use_sender_thread is false')
             send_messages(loaded_plugins)
         # For downstream
         yield res
