@@ -1,0 +1,27 @@
+version: '3'
+services:
+  server:
+      build: .
+      ipc: host
+      image: scarecrow
+      ports:
+          - "5454:5454"
+          - "5557:5557"
+      volumes:
+          - ./conf:/config
+          - ./models/research/object_detection/data:/models
+      command: ["/usr/local/bin/scarecrow_server --config /config"]
+
+  worker:
+      build: .
+      ipc: host
+      image: scarecrow
+      ports:
+          - "5454:5454"
+          - "5558:5558"
+      volumes:
+          - ./conf:/config
+          - ./resources/audio_files:/data
+      devices: 
+          - /dev/video2:/dev/video0
+      command: ["/usr/local/bin/scarecrow_client --config /config --input 0"]

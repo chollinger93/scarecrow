@@ -63,7 +63,7 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
         logger.debug('Image received')
         image_np = np.copy(frame)
         # check if frame is None
-        if image_np is None:
+        if image_np is None or image_np.size <= 0:
             logger.error('No frame available')
             break
 
@@ -73,23 +73,27 @@ def receive(category_index, model, address, port, protocol, pattern=0, min_detec
             logger.debug('Below threshold, dropping frame at {}'.format(c))
             continue
 
-        # Server plugins - before
-        run_image_detector_plugins_before(server_plugins, 'server', None, None, image_np)
+        try:
+            # Server plugins - before
+            run_image_detector_plugins_before(server_plugins, 'server', None, None, image_np)
 
-        # Actual detection.
-        res, i, confidence, np_det_img = detect(model, category_index, image_np,
-                                                i, confidence,
-                                                min_detections, min_confidence)                                     
-        if res:
-            yield True
-            p_res = res  
-            # Reset offset counter
-            c = 0 
+            # Actual detection.
+            res, i, confidence, np_det_img = detect(model, category_index, image_np,
+                                                    i, confidence,
+                                                    min_detections, min_confidence)                                     
+            if res:
+                yield True
+                p_res = res  
+                # Reset offset counter
+                c = 0 
 
-        # Server plugins - after
-        run_image_detector_plugins_after(
-            server_plugins, 'server', None, None, res, i, confidence, np_det_img)
-
+            # Server plugins - after
+            run_image_detector_plugins_after(
+                server_plugins, 'server', None, None, res, i, confidence, np_det_img)
+        except Exception as e:
+            logger.exception(e)
+            continue
+        
         key = cv2.waitKey(1) & 0xFF
         # check for 'q' key-press
         if key == ord("q"):

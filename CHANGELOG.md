@@ -7,7 +7,7 @@ All changes to the project are documented here.
 
 ## [0.5] - 2020-10-24
 * Support for easier `Docker` deployment out-of-the-box
-* Changed subscriber model to `Pub/Sub`
+* Changed subscriber model to `REQ/REP`
 * Simplified path management using `Docker`
 
 ## [0.4.2] - 2020-10-04

@@ -83,13 +83,19 @@ docker run -it \
 This runs `tensorflow` and opens the `zmq` listener.
 ```
 docker run -it \
-    -p 5455:5455 \
+    -p 5455:5454 \
     -p 5557:5557 \
     --ipc=host \
     -v $(pwd)/conf:/config \
     -v $(pwd)/models/research/object_detection/data:/models \
     scarecrow \
     /usr/local/bin/scarecrow_server --config /config
+```
+
+## Docker Compose
+Alternatively:
+```
+docker compose up
 ```
 
 ## Manual install (advanced)
