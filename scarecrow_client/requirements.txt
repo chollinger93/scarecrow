@@ -1,5 +1,5 @@
 Pillow==8.1.1
-lxml==4.6.2
+lxml==4.6.3
 matplotlib==3.1.2
 opencv-python==4.1.2.30
 pyzmq==18.1.1
