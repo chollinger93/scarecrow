@@ -5,6 +5,9 @@ All changes to the project are documented here.
 - pyPI release 
 - Motion detection code on client to cut down on network bandwidth
 
+## [0.5.1] - 2021-03-30
+* Pillow CVE-2021-25290, CVE-2021-25291, etc. fixes
+
 ## [0.5] - 2020-12-14
 * Support for easier `Docker` deployment out-of-the-box
 * Changed subscriber model to `REQ/REP`
