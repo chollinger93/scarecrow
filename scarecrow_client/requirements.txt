@@ -1,4 +1,4 @@
-Pillow==8.1.1
+Pillow==8.3.2
 lxml==4.6.3
 matplotlib==3.1.2
 opencv-python==4.1.2.30
