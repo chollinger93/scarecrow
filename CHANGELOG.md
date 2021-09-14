@@ -5,6 +5,10 @@ All changes to the project are documented here.
 - pyPI release 
 - Motion detection code on client to cut down on network bandwidth
 
+## [0.5.2] - 2021-09-14
+* Pillow CVE-2021-23437 etc. fixes
+* Version upgrades
+
 ## [0.5.1] - 2021-03-30
 * Pillow CVE-2021-25290, CVE-2021-25291, etc. fixes
 
