@@ -5,6 +5,10 @@ All changes to the project are documented here.
 - pyPI release 
 - Motion detection code on client to cut down on network bandwidth
 
+## [0.5.3] - 2022-01-16
+* Pillow version upgrade to 9.0.0, due to CVE-2022-22817 etc.
+* lxml version upgrade to 4.6.5
+
 ## [0.5.2] - 2021-09-14
 * Pillow CVE-2021-23437 etc. fixes
 * Version upgrades
