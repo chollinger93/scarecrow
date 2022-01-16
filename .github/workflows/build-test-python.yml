@@ -1,0 +1,38 @@
+name: Build & Test Scarecrow
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - ready_for_review
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Set up Python 3.9.5
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.9.5"
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y protobuf-compiler libgl1-mesa-glx libcairo2-dev libgirepository1.0-dev libsm6 libxext6 ffmpeg 
+        # Pygame
+        sudo apt-get install -y libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev python3-pygame
+        # setup.py
+        python -m pip install --upgrade pip
+        pip install . --upgrade
+    - name: Install models
+      run: |
+        ./sbin/install_tensorflow_models.sh
+    - name: Test with pytest
+      run: |
+        pytest -vv -s -x --cov=. --cov-report xml --cov-report html tests/*.py
