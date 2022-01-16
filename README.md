@@ -1,11 +1,26 @@
 # Scarecrow-Cam
 ![pytest](docs/tests.svg) ![covearge](docs/codecov.svg)
 
+## Maintenance & Project Status
+![https://img.shields.io/badge/Limited%20Maintenance%20Intended-x-important](https://img.shields.io/badge/Limited%20Maintenance%20Intended-x-important)
+
+This project is in what I would describe as *"Limited maintenance only"* status. I'll continue to listen to CVE notifications and make sure you have some way of running it, but I don't intend on working on any major releases.
+
+This project, at the time of writing, was a fun idea that used a somewhat novel approach to solve a real-life problem - a *showcase*, not a real, long-term project. But like so many tech showcases, that's all it is: Designed well enough to work and make a point, but not important enough to keep updated.
+
+Since writing this in 2019, things have moved on: This project depends on a very specific, old, and hence not necessarily well-performing `Tensorflow` model and was never designed to be containerized from the ground up, which makes the build and deployment process exceptionally brittle and, frankly, tedious to maintain. About half the dependencies called out in the [INSTALL.md](INSTALL.md) file are probably not actually needed.
+
+There are also some (given the nature of a showcase, somewhat intentional) design oversights that *could* be mitigated, namely the weak abstraction at many points of the project, such as in the plugin model; while re-working those is certainly possible, it's not something I'll be spending any time on soon.
+
+Last but not least, there simply are better ways of deploying an object detection model on a Raspberry these days, such as [TensorFlow Lite](https://www.tensorflow.org/lite/tutorials) that allow you to run a model directly on the Pi. Local detection can still react accordingly to a detection threshold (which could be centrally managed, e.g. in a database) in the same way it does here, or even directly via GPIO. Nothing stops you from still maintaining a central point of accessing alerts from multiple cameras, but running the model locally will always outperform a network video stream.
+
+## Introduction
 A `Raspberry Pi` powered, distributed (edge) computing camera setups that runs a `Tensorflow` object detection model to determine whether a person is on the camera. The `Raspberry Pi` is used for video streaming and triggering actions (such as playing audio, turning on lights, or triggering an Arduino), whereas a server or laptop runs the object detection. With a suitable `TFLite` installation, this can happen locally on the `Raspberry` as well.
 
 Based on the detection criteria, a **plugin model** allows to trigger downstream actions.
 
 *Based on my [blog](https://chollinger.com/blog/2019/12/tensorflow-on-edge-or-building-a-smart-security-camera-with-a-raspberry-pi/).*
+
 
 # Architecture
 ![Architecture](./docs/architecture.png)
@@ -136,9 +151,6 @@ Currently, the following plugins are avaibale:
 |--------|---------------------------------------------|----------------------------------------------|----------------------------|-------|
 | `audio`  | Plays audio files once a person is detected | Either `playsound`, `pygame`, or `omxplayer` | `conf/plugins.d/audio.ini` | `ZMQ` |
 | `store_video`  | Stores video files on the server, with a defined buffer or length | `Path` and `Encoding` settings | `conf/plugins.d/store_video.ini` | `ZServerMQ` |
-
-# How to contribute
-This project is in an **early state of development**. Therefore,  there are several open items that need to be covered. Please see [TODO](TODO.md) for details. 
 
 # License
 This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details.
