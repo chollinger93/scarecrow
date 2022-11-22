@@ -28,7 +28,7 @@ requirements = requirements_client + requirements_server
 setuptools.setup(
     cmdclass={'install': ShellInstall},
     name="scarecrow-cam",
-    version="0.5.3",
+    version="0.5.4",
     author="Christian Hollinger",
     author_email="christian@chollinger.com",
     description="A Raspberry Pi powered edge-computing camera setups that runs a Tensorflow object detection model to determine whether a person is on the camera and plays loud audio to scare them off.",
@@ -36,7 +36,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/chollinger93/scarecrow",
     packages=setuptools.find_packages(),
-    setup_requires=['Cython==0.29.24', 'numpy==1.19.0', 'anybadge==1.7.0'],
+    setup_requires=['setuptools<=65.5.1', 'Cython==0.29.24', 'numpy==1.19.0', 'anybadge==1.7.0'],
     install_requires=requirements,
     extras_require={'pygame': ['pygame==1.9.6'] },
     classifiers=[
